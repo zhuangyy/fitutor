@@ -104,35 +104,45 @@ class _ExercisePickerState extends State<ExercisePicker> {
             const SizedBox(height: 12),
             Expanded(
               child: ListView(
-                children: categories.entries.map((entry) {
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8),
-                        child: Text(
-                          entry.key,
-                          style: TextStyle(
-                              color: Colors.grey[600],
-                              fontWeight: FontWeight.bold),
+                children: [
+                  ...categories.entries.map((entry) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8),
+                          child: Text(
+                            entry.key,
+                            style: TextStyle(
+                                color: Colors.grey[600],
+                                fontWeight: FontWeight.bold),
+                          ),
                         ),
-                      ),
-                      ...entry.value.map((e) => ListTile(
-                            leading: Icon(e.category == '力量'
-                                ? Icons.fitness_center
-                                : Icons.timer),
-                            title: Text(e.name),
-                            subtitle: Text(e.category),
-                            onTap: () {
-                              setState(() {
-                                _selected = e;
-                                _showParams = true;
-                              });
-                            },
-                          )),
-                    ],
-                  );
-                }).toList(),
+                        ...entry.value.map((e) => ListTile(
+                              leading: Icon(e.category == '力量'
+                                  ? Icons.fitness_center
+                                  : Icons.timer),
+                              title: Text(e.name),
+                              subtitle: Text(e.category),
+                              onTap: () {
+                                setState(() {
+                                  _selected = e;
+                                  _showParams = true;
+                                });
+                              },
+                            )),
+                      ],
+                    );
+                  }),
+                  const Divider(),
+                  ListTile(
+                    leading: const Icon(Icons.add_circle_outline,
+                        color: Colors.green),
+                    title: const Text('自定义动作'),
+                    subtitle: const Text('创建新的训练动作'),
+                    onTap: _addCustomExercise,
+                  ),
+                ],
               ),
             ),
           ],
@@ -190,6 +200,98 @@ class _ExercisePickerState extends State<ExercisePicker> {
         ),
       ),
     );
+  }
+
+  Future<void> _addCustomExercise() async {
+    final nameController = TextEditingController();
+    final muscleController = TextEditingController();
+    String category = '力量';
+
+    final result = await showDialog<Map<String, String>>(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setDialogState) => AlertDialog(
+          title: const Text('创建自定义动作'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: nameController,
+                  decoration: const InputDecoration(
+                    labelText: '动作名称',
+                    hintText: '如：罗马尼亚硬拉',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: muscleController,
+                  decoration: const InputDecoration(
+                    labelText: '目标肌群',
+                    hintText: '如：背、腿、胸',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    const Text('类型：'),
+                    const SizedBox(width: 12),
+                    ChoiceChip(
+                      label: const Text('力量'),
+                      selected: category == '力量',
+                      onSelected: (_) =>
+                          setDialogState(() => category = '力量'),
+                    ),
+                    const SizedBox(width: 8),
+                    ChoiceChip(
+                      label: const Text('计时'),
+                      selected: category == '计时',
+                      onSelected: (_) =>
+                          setDialogState(() => category = '计时'),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+                onPressed: () => Navigator.pop(ctx),
+                child: const Text('取消')),
+            FilledButton(
+              onPressed: () {
+                if (nameController.text.trim().isEmpty) return;
+                Navigator.pop(ctx, {
+                  'name': nameController.text.trim(),
+                  'muscle': muscleController.text.trim().isEmpty
+                      ? '其他'
+                      : muscleController.text.trim(),
+                  'category': category,
+                });
+              },
+              child: const Text('创建'),
+            ),
+          ],
+        ),
+      ),
+    );
+
+    if (result != null && mounted) {
+      final exercise = Exercise(
+        name: result['name']!,
+        category: result['category']!,
+        muscleGroup: result['muscle']!,
+        iconCode: result['category'] == '力量' ? '59648' : '59654',
+        isPreset: false,
+        createdAt: DateTime.now().toIso8601String(),
+      );
+      final id = await _dao.insert(exercise);
+      _selected = exercise.copyWith(id: id);
+      _showParams = true;
+      _loadExercises();
+    }
   }
 
   Widget _buildNumberField(
