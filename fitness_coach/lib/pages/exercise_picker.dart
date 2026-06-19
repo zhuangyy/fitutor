@@ -28,6 +28,9 @@ class _ExercisePickerState extends State<ExercisePicker> {
   List<Exercise> _filtered = [];
   Exercise? _selected;
   final TextEditingController _searchController = TextEditingController();
+  final FocusNode _searchFocus = FocusNode();
+  final List<String> _recentSearches = [];
+  bool _showRecent = false;
 
   late int _sets;
   int? _reps;
@@ -43,7 +46,18 @@ class _ExercisePickerState extends State<ExercisePicker> {
     _reps = widget.preReps;
     _workSeconds = widget.preWorkSeconds;
     _restSeconds = widget.preRestSeconds;
+    _searchFocus.addListener(() {
+      setState(() => _showRecent = _searchFocus.hasFocus &&
+          _searchController.text.isEmpty);
+    });
     _loadExercises();
+  }
+
+  @override
+  void dispose() {
+    _searchFocus.dispose();
+    _searchController.dispose();
+    super.dispose();
   }
 
   Future<void> _loadExercises() async {
@@ -61,6 +75,7 @@ class _ExercisePickerState extends State<ExercisePicker> {
 
   void _filter(String query) {
     setState(() {
+      _showRecent = _searchFocus.hasFocus && query.isEmpty;
       if (query.isEmpty) {
         _filtered = _exercises;
       } else {
@@ -69,6 +84,15 @@ class _ExercisePickerState extends State<ExercisePicker> {
             .toList();
       }
     });
+  }
+
+  void _submitSearch(String query) {
+    if (query.trim().isEmpty) return;
+    _recentSearches.remove(query);
+    _recentSearches.insert(0, query);
+    if (_recentSearches.length > 5) _recentSearches.removeLast();
+    _searchController.text = query;
+    _filter(query);
   }
 
   @override
@@ -94,13 +118,27 @@ class _ExercisePickerState extends State<ExercisePicker> {
             const SizedBox(height: 12),
             TextField(
               controller: _searchController,
+              focusNode: _searchFocus,
               decoration: const InputDecoration(
                 hintText: '搜索动作...',
                 prefixIcon: Icon(Icons.search),
                 border: OutlineInputBorder(),
               ),
               onChanged: _filter,
+              onSubmitted: _submitSearch,
             ),
+            if (_showRecent && _recentSearches.isNotEmpty) ...[
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 8,
+                children: _recentSearches
+                    .map((q) => ActionChip(
+                          label: Text(q, style: const TextStyle(fontSize: 13)),
+                          onPressed: () => _submitSearch(q),
+                        ))
+                    .toList(),
+              ),
+            ],
             const SizedBox(height: 12),
             Expanded(
               child: ListView(
@@ -109,7 +147,7 @@ class _ExercisePickerState extends State<ExercisePicker> {
                     return ExpansionTile(
                       title: Text(entry.key,
                           style: const TextStyle(fontWeight: FontWeight.bold)),
-                      initiallyExpanded: false,
+                      initiallyExpanded: true,
                       children: entry.value
                           .map((e) => ListTile(
                                 leading: Icon(e.category == '力量'
