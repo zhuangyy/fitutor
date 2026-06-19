@@ -8,6 +8,7 @@ class SettingsProvider extends ChangeNotifier {
   final HapticService _haptic;
   final NotificationService _notification;
   int _reminderInterval = 10; // 默认10秒
+  bool _tapToPause = false;
 
   SettingsProvider({
     required TtsService tts,
@@ -22,6 +23,7 @@ class SettingsProvider extends ChangeNotifier {
   bool get reminderEnabled => _notification.reminderEnabled;
   TimeOfDay get reminderTime => _notification.reminderTime;
   int get reminderInterval => _reminderInterval;
+  bool get tapToPause => _tapToPause;
   String get reminderIntervalLabel =>
       _reminderInterval == 0 ? '关闭' : '${_reminderInterval}秒';
 
@@ -51,6 +53,11 @@ class SettingsProvider extends ChangeNotifier {
 
   void setReminderInterval(int seconds) {
     _reminderInterval = seconds;
+    notifyListeners();
+  }
+
+  void toggleTapToPause() {
+    _tapToPause = !_tapToPause;
     notifyListeners();
   }
 }

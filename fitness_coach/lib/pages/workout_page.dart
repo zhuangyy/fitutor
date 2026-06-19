@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:fitness_coach/providers/workout_provider.dart';
+import 'package:fitness_coach/providers/settings_provider.dart';
 import 'package:fitness_coach/services/coach_engine.dart';
 import 'package:fitness_coach/widgets/countdown_ring.dart';
 import 'package:fitness_coach/pages/workout_summary_page.dart';
@@ -35,8 +36,8 @@ class _WorkoutPageState extends State<WorkoutPage> {
       },
       child: Scaffold(
         body: SafeArea(
-          child: Consumer<WorkoutProvider>(
-            builder: (context, provider, _) {
+          child: Consumer2<WorkoutProvider, SettingsProvider>(
+            builder: (context, provider, settings, _) {
               final state = provider.coachState;
 
               if (state.phase == CoachPhase.completed) {
@@ -51,7 +52,15 @@ class _WorkoutPageState extends State<WorkoutPage> {
                 return const SizedBox.shrink();
               }
 
-              return _buildWorkoutView(context, state);
+              final canTapPause = settings.tapToPause &&
+                  (state.phase == CoachPhase.working ||
+                      state.phase == CoachPhase.resting);
+
+              return GestureDetector(
+                behavior: HitTestBehavior.translucent,
+                onTap: canTapPause ? () => provider.pause() : null,
+                child: _buildWorkoutView(context, state),
+              );
             },
           ),
         ),

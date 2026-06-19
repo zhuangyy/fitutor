@@ -90,6 +90,7 @@ class CoachEngine {
   Timer? _timer;
   DateTime? _timerBase;
   CoachPhase _phaseBeforePause = CoachPhase.working;
+  int _frozenRemaining = 0;
 
   /// 中途提醒间隔秒数，0 = 关闭
   int reminderIntervalSeconds = 0;
@@ -120,14 +121,16 @@ class CoachEngine {
         _state.phase != CoachPhase.resting) return;
     _timer?.cancel();
     _phaseBeforePause = _state.phase;
+    _frozenRemaining = _state.remainingSeconds;
     _emitState(CoachPhase.paused);
     _tts.speak('暂停中');
   }
 
   void resume() {
     if (_state.phase != CoachPhase.paused) return;
-    final remaining = _state.remainingSeconds;
+    final remaining = _frozenRemaining;
     final phase = _phaseBeforePause;
+    _tts.speak('继续');
     _emitState(phase, remaining: remaining);
     _startTimer(remaining, _onTimerComplete);
   }
@@ -140,6 +143,7 @@ class CoachEngine {
 
   void stop() {
     _timer?.cancel();
+    _tts.speak('训练结束');
     _emit(const CoachState(phase: CoachPhase.idle));
   }
 
@@ -217,8 +221,8 @@ class CoachEngine {
     final workTime = exercise.workSeconds;
     _emitState(CoachPhase.working, remaining: workTime);
     await _tts.speak('开始');
-    playBeep();
     _startTimer(workTime, _onWorkComplete);
+    playBeep();
   }
 
   Future<void> _onWorkComplete() async {
