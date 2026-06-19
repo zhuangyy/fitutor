@@ -38,7 +38,7 @@ class FitnessCoachApp extends StatelessWidget {
         ),
       ],
       child: MaterialApp(
-        title: 'Fitness Coach',
+        title: '跟我练',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(

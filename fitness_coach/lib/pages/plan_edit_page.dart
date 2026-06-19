@@ -83,25 +83,36 @@ class _PlanEditPageState extends State<PlanEditPage> {
               ],
             ),
             const SizedBox(height: 8),
-            ..._exercises.asMap().entries.map((entry) {
-              final index = entry.key;
-              final pe = entry.value;
-              return Card(
-                child: ListTile(
-                  leading: const Icon(Icons.drag_handle),
-                  title: Text(pe.exerciseName ?? '动作${index + 1}'),
-                  subtitle: Text(
-                      '${pe.sets}组 · ${pe.workSeconds}秒/组 · 休息${pe.restSeconds}秒'),
-                  trailing: IconButton(
-                    icon:
-                        const Icon(Icons.delete_outline, color: Colors.red),
-                    onPressed: () =>
-                        setState(() => _exercises.removeAt(index)),
+            ReorderableListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: _exercises.length,
+              onReorder: (oldIndex, newIndex) {
+                setState(() {
+                  if (newIndex > oldIndex) newIndex--;
+                  final item = _exercises.removeAt(oldIndex);
+                  _exercises.insert(newIndex, item);
+                });
+              },
+              itemBuilder: (context, index) {
+                final pe = _exercises[index];
+                return Card(
+                  key: ValueKey(pe.exerciseId * 1000 + index),
+                  child: ListTile(
+                    leading: const Icon(Icons.drag_handle),
+                    title: Text(pe.exerciseName ?? '动作${index + 1}'),
+                    subtitle: Text(
+                        '${pe.sets}组 · ${pe.workSeconds}秒/组 · 休息${pe.restSeconds}秒'),
+                    trailing: IconButton(
+                      icon: const Icon(Icons.delete_outline, color: Colors.red),
+                      onPressed: () =>
+                          setState(() => _exercises.removeAt(index)),
+                    ),
+                    onTap: () => _editExercise(index),
                   ),
-                  onTap: () => _editExercise(index),
-                ),
-              );
-            }),
+                );
+              },
+            ),
             const SizedBox(height: 12),
             SizedBox(
               width: double.infinity,

@@ -53,7 +53,7 @@ class _PlanListTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('🏋️ Fitness Coach')),
+      appBar: AppBar(title: const Text('🏋️ 跟我练')),
       body: Consumer<PlanProvider>(
         builder: (context, provider, _) {
           if (provider.loading) {

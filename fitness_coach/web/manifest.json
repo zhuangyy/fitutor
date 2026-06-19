@@ -1,6 +1,6 @@
 {
-    "name": "fitness_coach",
-    "short_name": "fitness_coach",
+    "name": "跟我练",
+    "short_name": "跟我练",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
