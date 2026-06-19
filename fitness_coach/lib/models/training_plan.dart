@@ -4,6 +4,7 @@ class TrainingPlan {
   final int? id;
   final String name;
   final String? description;
+  final int sortOrder;
   final String? createdAt;
   String? updatedAt;
   List<PlanExercise> exercises;
@@ -12,6 +13,7 @@ class TrainingPlan {
     this.id,
     required this.name,
     this.description,
+    this.sortOrder = 0,
     this.createdAt,
     this.updatedAt,
     List<PlanExercise>? exercises,
@@ -22,6 +24,7 @@ class TrainingPlan {
       id: map['id'] as int?,
       name: map['name'] as String,
       description: map['description'] as String?,
+      sortOrder: map['sort_order'] as int? ?? 0,
       createdAt: map['created_at'] as String?,
       updatedAt: map['updated_at'] as String?,
     );
@@ -32,6 +35,7 @@ class TrainingPlan {
       if (id != null) 'id': id,
       'name': name,
       'description': description,
+      'sort_order': sortOrder,
       'created_at': createdAt,
       'updated_at': updatedAt,
     };
@@ -41,6 +45,7 @@ class TrainingPlan {
     int? id,
     String? name,
     String? description,
+    int? sortOrder,
     String? createdAt,
     String? updatedAt,
     List<PlanExercise>? exercises,
@@ -49,6 +54,7 @@ class TrainingPlan {
       id: id ?? this.id,
       name: name ?? this.name,
       description: description ?? this.description,
+      sortOrder: sortOrder ?? this.sortOrder,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       exercises: exercises ?? List.from(this.exercises),

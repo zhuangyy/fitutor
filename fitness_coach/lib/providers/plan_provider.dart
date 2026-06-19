@@ -52,4 +52,18 @@ class PlanProvider extends ChangeNotifier {
     }
     await loadPlans();
   }
+
+  Future<void> reorderPlans(int oldIndex, int newIndex) async {
+    if (oldIndex == newIndex) return;
+    final plan = _plans.removeAt(oldIndex);
+    _plans.insert(newIndex, plan);
+    for (int i = 0; i < _plans.length; i++) {
+      if (_plans[i].sortOrder != i) {
+        _plans[i] = _plans[i].copyWith(sortOrder: i);
+        _plans[i].updatedAt = DateTime.now().toIso8601String();
+        await _planDao.updatePlan(_plans[i]);
+      }
+    }
+    notifyListeners();
+  }
 }

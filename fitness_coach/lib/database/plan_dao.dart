@@ -17,7 +17,7 @@ class PlanDao {
 
   Future<List<TrainingPlan>> getAllPlans() async {
     final db = await _dbHelper.database;
-    final maps = await db.query('training_plans', orderBy: 'updated_at DESC');
+    final maps = await db.query('training_plans', orderBy: 'sort_order, updated_at DESC');
     final plans = maps.map((m) => TrainingPlan.fromMap(m)).toList();
     for (final plan in plans) {
       plan.exercises = await _getPlanExercises(plan.id!);
