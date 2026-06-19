@@ -106,32 +106,25 @@ class _ExercisePickerState extends State<ExercisePicker> {
               child: ListView(
                 children: [
                   ...categories.entries.map((entry) {
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8),
-                          child: Text(
-                            entry.key,
-                            style: TextStyle(
-                                color: Colors.grey[600],
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                        ...entry.value.map((e) => ListTile(
-                              leading: Icon(e.category == '力量'
-                                  ? Icons.fitness_center
-                                  : Icons.timer),
-                              title: Text(e.name),
-                              subtitle: Text(e.category),
-                              onTap: () {
-                                setState(() {
-                                  _selected = e;
-                                  _showParams = true;
-                                });
-                              },
-                            )),
-                      ],
+                    return ExpansionTile(
+                      title: Text(entry.key,
+                          style: const TextStyle(fontWeight: FontWeight.bold)),
+                      initiallyExpanded: false,
+                      children: entry.value
+                          .map((e) => ListTile(
+                                leading: Icon(e.category == '力量'
+                                    ? Icons.fitness_center
+                                    : Icons.timer),
+                                title: Text(e.name),
+                                subtitle: Text(e.category),
+                                onTap: () {
+                                  setState(() {
+                                    _selected = e;
+                                    _showParams = true;
+                                  });
+                                },
+                              ))
+                          .toList(),
                     );
                   }),
                   const Divider(),
