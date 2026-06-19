@@ -3,17 +3,20 @@ import 'package:flutter/material.dart';
 import 'package:fitness_coach/services/coach_engine.dart';
 import 'package:fitness_coach/services/tts_service.dart';
 import 'package:fitness_coach/services/haptic_service.dart';
+import 'package:fitness_coach/services/background_service_manager.dart';
 import 'package:fitness_coach/models/training_plan.dart';
 import 'package:fitness_coach/database/session_dao.dart';
 import 'package:fitness_coach/models/workout_session.dart';
 
-class WorkoutProvider extends ChangeNotifier {
+class WorkoutProvider extends ChangeNotifier with WidgetsBindingObserver {
   late final CoachEngine _engine;
   final SessionDao _sessionDao = SessionDao();
+  final BackgroundServiceManager _bgService = BackgroundServiceManager();
   CoachState _coachState = const CoachState();
   StreamSubscription<CoachState>? _sub;
   DateTime? _workoutStartedAt;
   String? _planName;
+  bool _wasBackgrounded = false;
 
   WorkoutProvider({required TtsService tts, required HapticService haptic}) {
     _engine = CoachEngine(tts: tts, haptic: haptic);
@@ -24,6 +27,18 @@ class WorkoutProvider extends ChangeNotifier {
       }
       notifyListeners();
     });
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused) {
+      _wasBackgrounded = true;
+    } else if (state == AppLifecycleState.resumed && _wasBackgrounded) {
+      _wasBackgrounded = false;
+      // 从后台恢复时刷新 UI，wall-clock delta 自动修正倒计时
+      notifyListeners();
+    }
   }
 
   CoachState get coachState => _coachState;
@@ -37,13 +52,18 @@ class WorkoutProvider extends ChangeNotifier {
 
   void startWorkout() {
     _workoutStartedAt = DateTime.now();
+    _bgService.startWorkout();
     _engine.start();
   }
 
   void pause() => _engine.pause();
   void resume() => _engine.resume();
   void skipRest() => _engine.skipRest();
-  void stopWorkout() => _engine.stop();
+
+  void stopWorkout() {
+    _engine.stop();
+    _bgService.stopWorkout();
+  }
 
   Future<void> _saveSession() async {
     if (_workoutStartedAt == null) return;
@@ -72,6 +92,7 @@ class WorkoutProvider extends ChangeNotifier {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _sub?.cancel();
     _engine.dispose();
     super.dispose();
