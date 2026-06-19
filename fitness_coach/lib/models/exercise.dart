@@ -6,6 +6,7 @@ class Exercise {
   final String iconCode;      // Flutter IconData codePoint
   final String? description;
   bool _isPreset;
+  final int sortOrder;
   final String? createdAt;
 
   Exercise({
@@ -16,6 +17,7 @@ class Exercise {
     required this.iconCode,
     this.description,
     bool isPreset = false,
+    this.sortOrder = 0,
     this.createdAt,
   }) : _isPreset = isPreset;
 
@@ -31,6 +33,7 @@ class Exercise {
       iconCode: map['icon_code'] as String,
       description: map['description'] as String?,
       isPreset: (map['is_preset'] as int?) == 1,
+      sortOrder: map['sort_order'] as int? ?? 0,
       createdAt: map['created_at'] as String?,
     );
   }
@@ -44,6 +47,7 @@ class Exercise {
       'icon_code': iconCode,
       'description': description,
       'is_preset': _isPreset ? 1 : 0,
+      'sort_order': sortOrder,
       'created_at': createdAt,
     };
   }
@@ -56,6 +60,7 @@ class Exercise {
     String? iconCode,
     String? description,
     bool? isPreset,
+    int? sortOrder,
     String? createdAt,
   }) {
     return Exercise(
@@ -66,6 +71,7 @@ class Exercise {
       iconCode: iconCode ?? this.iconCode,
       description: description ?? this.description,
       isPreset: isPreset ?? _isPreset,
+      sortOrder: sortOrder ?? this.sortOrder,
       createdAt: createdAt ?? this.createdAt,
     );
   }

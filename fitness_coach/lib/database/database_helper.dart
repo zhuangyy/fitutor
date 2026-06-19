@@ -25,7 +25,7 @@ class DatabaseHelper {
 
     return await openDatabase(
       path,
-      version: 2,
+      version: 3,
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
     );
@@ -41,6 +41,7 @@ class DatabaseHelper {
         icon_code TEXT NOT NULL,
         description TEXT,
         is_preset INTEGER NOT NULL DEFAULT 0,
+        sort_order INTEGER NOT NULL DEFAULT 0,
         created_at TEXT NOT NULL
       )
     ''');
@@ -89,6 +90,10 @@ class DatabaseHelper {
     if (oldVersion < 2) {
       await db.execute(
           'ALTER TABLE training_plans ADD COLUMN sort_order INTEGER NOT NULL DEFAULT 0');
+    }
+    if (oldVersion < 3) {
+      await db.execute(
+          'ALTER TABLE exercises ADD COLUMN sort_order INTEGER NOT NULL DEFAULT 0');
     }
   }
 

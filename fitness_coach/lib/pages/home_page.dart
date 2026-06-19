@@ -8,6 +8,7 @@ import 'package:fitness_coach/pages/plan_edit_page.dart';
 import 'package:fitness_coach/pages/workout_page.dart';
 import 'package:fitness_coach/pages/history_page.dart';
 import 'package:fitness_coach/pages/settings_page.dart';
+import 'package:fitness_coach/pages/exercise_manage_page.dart';
 import 'package:fitness_coach/widgets/plan_card.dart';
 
 class HomePage extends StatefulWidget {
@@ -22,6 +23,7 @@ class _HomePageState extends State<HomePage> {
 
   final _pages = const [
     _PlanListTab(),
+    ExerciseManagePage(),
     HistoryPage(),
     SettingsPage(),
   ];
@@ -39,6 +41,8 @@ class _HomePageState extends State<HomePage> {
         destinations: const [
           NavigationDestination(
               icon: Icon(Icons.fitness_center), label: '计划'),
+          NavigationDestination(
+              icon: Icon(Icons.sports_gymnastics), label: '动作'),
           NavigationDestination(icon: Icon(Icons.history), label: '历史'),
           NavigationDestination(icon: Icon(Icons.settings), label: '设置'),
         ],

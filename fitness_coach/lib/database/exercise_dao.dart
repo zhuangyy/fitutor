@@ -14,7 +14,7 @@ class ExerciseDao {
 
   Future<List<Exercise>> getAll() async {
     final db = await _dbHelper.database;
-    final maps = await db.query('exercises', orderBy: 'category, name');
+    final maps = await db.query('exercises', orderBy: 'sort_order, category, name');
     return maps.map((m) => Exercise.fromMap(m)).toList();
   }
 
