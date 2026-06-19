@@ -78,4 +78,22 @@ class ExerciseDao {
         'SELECT COUNT(*) as cnt FROM exercises WHERE is_preset = 1');
     return (result.first['cnt'] as int) > 0;
   }
+
+  /// 增量同步预置动作：只插入数据库中不存在的（按名称去重）
+  Future<void> syncPresetExercises(List<Exercise> exercises) async {
+    final db = await _dbHelper.database;
+    final existing =
+        await db.rawQuery('SELECT name FROM exercises WHERE is_preset = 1');
+    final existingNames = existing.map((e) => e['name'] as String).toSet();
+    final toInsert = exercises
+        .where((e) => !existingNames.contains(e.name))
+        .toList();
+    if (toInsert.isNotEmpty) {
+      final batch = db.batch();
+      for (final exercise in toInsert) {
+        batch.insert('exercises', exercise.toMap());
+      }
+      await batch.commit(noResult: true);
+    }
+  }
 }
