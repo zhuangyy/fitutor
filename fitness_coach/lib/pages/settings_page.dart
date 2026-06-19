@@ -14,31 +14,6 @@ class SettingsPage extends StatelessWidget {
           return ListView(
             padding: const EdgeInsets.all(16),
             children: [
-              _buildSectionTitle(context, '通知'),
-              SwitchListTile(
-                title: const Text('训练提醒'),
-                subtitle: settings.reminderEnabled
-                    ? Text('每天 ${settings.reminderTime.format(context)}')
-                    : const Text('关闭'),
-                value: settings.reminderEnabled,
-                onChanged: (v) => settings.toggleReminder(v),
-              ),
-              if (settings.reminderEnabled)
-                ListTile(
-                  title: const Text('提醒时间'),
-                  trailing:
-                      Text(settings.reminderTime.format(context)),
-                  onTap: () async {
-                    final time = await showTimePicker(
-                      context: context,
-                      initialTime: settings.reminderTime,
-                    );
-                    if (time != null) {
-                      await settings.setReminderTime(time);
-                    }
-                  },
-                ),
-              const Divider(),
               _buildSectionTitle(context, '教练'),
               SwitchListTile(
                 title: const Text('语音播报'),
@@ -49,6 +24,14 @@ class SettingsPage extends StatelessWidget {
                 title: const Text('震动反馈'),
                 value: settings.hapticEnabled,
                 onChanged: (_) => settings.toggleHaptic(),
+              ),
+              const Divider(),
+              _buildSectionTitle(context, '中途提醒'),
+              ListTile(
+                title: const Text('间隔提醒'),
+                subtitle: const Text('倒计时中每隔一段时间播报剩余秒数'),
+                trailing: Text(settings.reminderIntervalLabel),
+                onTap: () => _showIntervalPicker(context, settings),
               ),
               const Divider(),
               _buildSectionTitle(context, '关于'),
@@ -73,4 +56,29 @@ class SettingsPage extends StatelessWidget {
       ),
     );
   }
+}
+
+Future<void> _showIntervalPicker(
+    BuildContext context, SettingsProvider settings) async {
+  const options = [0, 5, 10, 15, 20, 30];
+  const labels = ['关闭', '5秒', '10秒', '15秒', '20秒', '30秒'];
+  await showDialog<void>(
+    context: context,
+    builder: (ctx) => SimpleDialog(
+      title: const Text('间隔提醒'),
+      children: List.generate(options.length, (i) {
+        final selected = options[i] == settings.reminderInterval;
+        return RadioListTile<int>(
+          title: Text(labels[i]),
+          value: options[i],
+          groupValue: settings.reminderInterval,
+          selected: selected,
+          onChanged: (v) {
+            settings.setReminderInterval(v!);
+            Navigator.pop(ctx);
+          },
+        );
+      }),
+    ),
+  );
 }

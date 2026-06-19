@@ -3,6 +3,7 @@ import 'package:fitness_coach/models/training_plan.dart';
 import 'package:fitness_coach/models/plan_exercise.dart';
 import 'package:fitness_coach/services/tts_service.dart';
 import 'package:fitness_coach/services/haptic_service.dart';
+import 'package:fitness_coach/utils/beep.dart';
 
 enum CoachPhase {
   idle,
@@ -90,6 +91,9 @@ class CoachEngine {
   DateTime? _timerBase;
   CoachPhase _phaseBeforePause = CoachPhase.working;
 
+  /// 中途提醒间隔秒数，0 = 关闭
+  int reminderIntervalSeconds = 0;
+
   CoachEngine({required TtsService tts, required HapticService haptic})
       : _tts = tts,
         _haptic = haptic;
@@ -125,7 +129,7 @@ class CoachEngine {
     final remaining = _state.remainingSeconds;
     final phase = _phaseBeforePause;
     _emitState(phase, remaining: remaining);
-    _startTimer(remaining, () => _onTimerComplete());
+    _startTimer(remaining, _onTimerComplete);
   }
 
   void skipRest() {
@@ -155,9 +159,13 @@ class CoachEngine {
     _stateController.add(_state);
   }
 
-  void _startTimer(int seconds, void Function() onDone) {
+  void _startTimer(int seconds, Future<void> Function() onDone) {
     _timerBase = DateTime.now();
     _emit(_state.copyWith(phase: _state.phase, remainingSeconds: seconds));
+
+    // 中途提醒间隔
+    final interval = reminderIntervalSeconds;
+    int lastAnnouncedRemaining = seconds; // 避免刚开始就播报
 
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       final elapsed = DateTime.now().difference(_timerBase!).inSeconds;
@@ -172,15 +180,20 @@ class CoachEngine {
       _emit(_state.copyWith(
           phase: _state.phase, remainingSeconds: remaining));
 
-      // 最后3秒：震动
-      if (remaining <= 3) {
-        _haptic.countdownBuzz(remaining);
-        // 最后1秒不重复播语音（避免叠音）
-        if (remaining > 1) {
-          _tts.speak('$remaining');
-        } else if (remaining == 1) {
-          _tts.speak('开始');
+      // 中途间隔提醒：每隔 interval 秒播报剩余时间
+      if (interval > 0 && remaining > 5 && remaining < lastAnnouncedRemaining) {
+        if (remaining % interval == 0) {
+          lastAnnouncedRemaining = remaining;
+          final prefix =
+              _state.phase == CoachPhase.resting ? '休息' : '';
+          _tts.speak('${prefix}还剩余$remaining秒');
         }
+      }
+
+      // 最后5秒：震动 + 倒数
+      if (remaining <= 5) {
+        _haptic.countdownBuzz(remaining);
+        _tts.speak('$remaining');
       }
     });
   }
@@ -192,37 +205,46 @@ class CoachEngine {
       currentExercise: exercise,
       currentSetIndex: 0,
       totalSetsForCurrentExercise: exercise.sets,
-      remainingSeconds: 3,
+      remainingSeconds: 0,
     ));
     _tts.speak(_announcementText(exercise));
-    _startTimer(3, () => _beginWorking());
+    // TTS 排队：动作信息 → "开始" → 计时器启动
+    _beginWorking();
   }
 
-  void _beginWorking() {
+  Future<void> _beginWorking() async {
     final exercise = _state.currentExercise!;
     final workTime = exercise.workSeconds;
     _emitState(CoachPhase.working, remaining: workTime);
-    _startTimer(workTime, () => _onWorkComplete());
+    await _tts.speak('开始');
+    playBeep();
+    _startTimer(workTime, _onWorkComplete);
   }
 
-  void _onWorkComplete() {
+  Future<void> _onWorkComplete() async {
     final exercise = _state.currentExercise!;
     final newSetIndex = _state.currentSetIndex + 1;
 
     if (newSetIndex >= exercise.sets) {
-      _tts.speak('${exercise.exerciseName ?? '动作'}完成');
+      await _tts.speak('${exercise.exerciseName ?? '动作'}完成');
       _enterTransitioning();
     } else {
       _emit(_state.copyWith(currentSetIndex: newSetIndex));
       _emitState(CoachPhase.resting, remaining: exercise.restSeconds);
-      _startTimer(exercise.restSeconds, () => _onRestComplete());
+      await _tts.speak('休息${exercise.restSeconds}秒');
+      _startTimer(exercise.restSeconds, _onRestComplete);
     }
   }
 
-  void _onRestComplete() {
-    _emitState(CoachPhase.working,
-        remaining: _state.currentExercise!.workSeconds);
-    _startTimer(_state.currentExercise!.workSeconds, () => _onWorkComplete());
+  Future<void> _onRestComplete() async {
+    final exercise = _state.currentExercise!;
+    _emitState(CoachPhase.working, remaining: exercise.workSeconds);
+    final setName =
+        '${exercise.exerciseName ?? '动作'}，第${_state.currentSetIndex + 1}组';
+    await _tts.speak(setName);
+    await _tts.speak('开始');
+    await playBeep();
+    _startTimer(exercise.workSeconds, _onWorkComplete);
   }
 
   void _enterTransitioning() {
@@ -251,16 +273,16 @@ class CoachEngine {
     });
   }
 
-  void _onTimerComplete() {
+  Future<void> _onTimerComplete() async {
     switch (_state.phase) {
       case CoachPhase.announcing:
-        _beginWorking();
+        await _beginWorking();
         break;
       case CoachPhase.working:
-        _onWorkComplete();
+        await _onWorkComplete();
         break;
       case CoachPhase.resting:
-        _onRestComplete();
+        await _onRestComplete();
         break;
       default:
         break;

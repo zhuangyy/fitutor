@@ -21,13 +21,15 @@ class HapticService {
     HapticFeedback.heavyImpact();
   }
 
-  /// 倒计时最后3秒每秒震动：3→light, 2→medium, 1→heavy
+  /// 倒计时最后5秒每秒震动：5,4→light, 3→medium, 2→medium, 1→heavy
   void countdownBuzz(int remainingSeconds) {
     if (!_enabled) return;
     switch (remainingSeconds) {
-      case 3:
+      case 5:
+      case 4:
         light();
         break;
+      case 3:
       case 2:
         medium();
         break;

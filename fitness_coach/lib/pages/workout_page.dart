@@ -139,6 +139,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
             remainingSeconds: state.remainingSeconds,
             totalSeconds: total,
             size: 200,
+            color: isWorking ? null : Colors.orange,
           ),
           const SizedBox(height: 24),
           Text(

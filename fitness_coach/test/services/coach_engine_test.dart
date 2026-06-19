@@ -74,15 +74,16 @@ void main() {
     ];
 
     engine.loadPlan(plan);
-    engine.start();
 
     final phases = <CoachPhase>[];
     final sub = engine.stateStream.listen((s) {
       phases.add(s.phase);
     });
 
-    // Wait for full flow: announcing(3s) → working(1s) → completed
-    await Future.delayed(const Duration(seconds: 5));
+    engine.start();
+
+    // Wait for full flow: announcing(instant) → beep(~1.1s) → working(1s) → completed
+    await Future.delayed(const Duration(seconds: 4));
     await sub.cancel();
 
     expect(phases.contains(CoachPhase.announcing), true);
@@ -107,8 +108,8 @@ void main() {
     engine.loadPlan(plan);
     engine.start();
 
-    // Wait for announcing to finish and working to begin
-    await Future.delayed(const Duration(seconds: 4));
+    // Wait for working to begin (async TTS + beep ~1.1s)
+    await Future.delayed(const Duration(seconds: 2));
     expect(engine.currentState.phase, CoachPhase.working);
 
     // Pause

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:fitness_coach/providers/plan_provider.dart';
 import 'package:fitness_coach/providers/workout_provider.dart';
+import 'package:fitness_coach/providers/settings_provider.dart';
 import 'package:fitness_coach/models/training_plan.dart';
 import 'package:fitness_coach/pages/plan_edit_page.dart';
 import 'package:fitness_coach/pages/workout_page.dart';
@@ -115,7 +116,8 @@ class _PlanListTab extends StatelessWidget {
       ),
     );
     if (confirmed == true && context.mounted) {
-      context.read<WorkoutProvider>().loadPlan(plan);
+      final interval = context.read<SettingsProvider>().reminderInterval;
+      context.read<WorkoutProvider>().loadPlan(plan, intervalSeconds: interval);
       Navigator.push(
           context, MaterialPageRoute(builder: (_) => const WorkoutPage()));
     }

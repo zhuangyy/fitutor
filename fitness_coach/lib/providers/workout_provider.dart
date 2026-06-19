@@ -28,8 +28,9 @@ class WorkoutProvider extends ChangeNotifier {
 
   CoachState get coachState => _coachState;
 
-  void loadPlan(TrainingPlan plan) {
+  void loadPlan(TrainingPlan plan, {int intervalSeconds = 0}) {
     _planName = plan.name;
+    _engine.reminderIntervalSeconds = intervalSeconds;
     _engine.loadPlan(plan);
     notifyListeners();
   }

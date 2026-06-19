@@ -7,6 +7,7 @@ class SettingsProvider extends ChangeNotifier {
   final TtsService _tts;
   final HapticService _haptic;
   final NotificationService _notification;
+  int _reminderInterval = 10; // 默认10秒
 
   SettingsProvider({
     required TtsService tts,
@@ -20,6 +21,9 @@ class SettingsProvider extends ChangeNotifier {
   bool get hapticEnabled => _haptic.enabled;
   bool get reminderEnabled => _notification.reminderEnabled;
   TimeOfDay get reminderTime => _notification.reminderTime;
+  int get reminderInterval => _reminderInterval;
+  String get reminderIntervalLabel =>
+      _reminderInterval == 0 ? '关闭' : '${_reminderInterval}秒';
 
   void toggleTts() {
     _tts.toggleMute();
@@ -42,6 +46,11 @@ class SettingsProvider extends ChangeNotifier {
 
   Future<void> setReminderTime(TimeOfDay time) async {
     await _notification.scheduleDailyReminder(time);
+    notifyListeners();
+  }
+
+  void setReminderInterval(int seconds) {
+    _reminderInterval = seconds;
     notifyListeners();
   }
 }
