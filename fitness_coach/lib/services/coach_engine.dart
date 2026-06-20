@@ -221,8 +221,9 @@ class CoachEngine {
     final workTime = exercise.workSeconds;
     _emitState(CoachPhase.working, remaining: workTime);
     await _tts.speak('开始');
-    _startTimer(workTime, _onWorkComplete);
+    await Future.delayed(const Duration(seconds: 1));
     playBeep();
+    _startTimer(workTime, _onWorkComplete);
   }
 
   Future<void> _onWorkComplete() async {
@@ -236,6 +237,8 @@ class CoachEngine {
       _emit(_state.copyWith(currentSetIndex: newSetIndex));
       _emitState(CoachPhase.resting, remaining: exercise.restSeconds);
       await _tts.speak('休息${exercise.restSeconds}秒');
+      await Future.delayed(const Duration(seconds: 1));
+      playBeep();
       _startTimer(exercise.restSeconds, _onRestComplete);
     }
   }
@@ -247,7 +250,8 @@ class CoachEngine {
         '${exercise.exerciseName ?? '动作'}，第${_state.currentSetIndex + 1}组';
     await _tts.speak(setName);
     await _tts.speak('开始');
-    await playBeep();
+    await Future.delayed(const Duration(seconds: 1));
+    playBeep();
     _startTimer(exercise.workSeconds, _onWorkComplete);
   }
 
