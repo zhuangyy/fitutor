@@ -10,7 +10,7 @@ final _bgService = BackgroundServiceManager();
 /// macOS: 生成 WAV 并通过 afplay 播放。
 /// iOS: 系统点击音。
 Future<void> playBeep() async {
-  if (Platform.isAndroid) {
+  if (Platform.isAndroid || Platform.isIOS) {
     await _bgService.playBeep();
   } else if (Platform.isMacOS) {
     await _playMacOsBeep();

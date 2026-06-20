@@ -1,6 +1,7 @@
 import Flutter
 import UIKit
 import AVFoundation
+import AudioToolbox
 
 /// 静默音频播放器：循环播放空 buffer，保持后台音频会话活跃。
 class SilentAudioPlayer {
@@ -58,10 +59,12 @@ class SilentAudioPlayer {
     func didInitializeImplicitFlutterEngine(_ engineBridge: FlutterImplicitEngineBridge) {
         GeneratedPluginRegistrant.register(with: engineBridge.pluginRegistry)
 
+        guard let registrar = engineBridge.pluginRegistry.registrar(forPlugin: "FitutorAudio")
+        else { return }
         let channel = FlutterMethodChannel(
             name: "com.fitutor/audio_bridge",
-            binaryMessenger: engineBridge.engine.binaryMessenger)
-        channel.setMethodCallHandler { [weak self] (call, result) in
+            binaryMessenger: registrar.messenger())
+        channel.setMethodCallHandler { [weak self] (call: FlutterMethodCall, result: @escaping FlutterResult) in
             switch call.method {
             case "startSilentAudio":
                 do {
@@ -78,6 +81,9 @@ class SilentAudioPlayer {
                 } catch {
                     NSLog("AVAudioSession setActive failed: \(error)")
                 }
+                result(nil)
+            case "playBeep":
+                AudioServicesPlaySystemSound(1057) // 短促提示音
                 result(nil)
             default:
                 result(FlutterMethodNotImplemented)
