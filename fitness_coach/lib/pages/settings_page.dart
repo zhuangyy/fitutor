@@ -28,7 +28,8 @@ class SettingsPage extends StatelessWidget {
               ListTile(
                 title: const Text('间隔提醒'),
                 subtitle: const Text('倒计时中每隔一段时间播报剩余秒数'),
-                trailing: Text(settings.reminderIntervalLabel),
+                trailing: Text(settings.reminderIntervalLabel,
+                    style: Theme.of(context).textTheme.bodyLarge),
                 onTap: () => _showIntervalPicker(context, settings),
               ),
               const Divider(),
@@ -41,8 +42,11 @@ class SettingsPage extends StatelessWidget {
               ),
               const Divider(),
               _buildSectionTitle(context, '关于'),
-              const ListTile(
-                  title: Text('版本'), trailing: Text('v1.1.1')),
+              ListTile(
+                title: const Text('版本'),
+                trailing: Text('v1.1.1',
+                    style: Theme.of(context).textTheme.bodyLarge),
+              ),
             ],
           );
         },
@@ -55,10 +59,10 @@ class SettingsPage extends StatelessWidget {
       padding: const EdgeInsets.only(left: 16, top: 16, bottom: 8),
       child: Text(
         title,
-        style: TextStyle(
-          color: Theme.of(context).colorScheme.primary,
-          fontWeight: FontWeight.bold,
-        ),
+        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+              color: Theme.of(context).colorScheme.primary,
+              fontWeight: FontWeight.bold,
+            ),
       ),
     );
   }
