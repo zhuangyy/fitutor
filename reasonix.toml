@@ -54,7 +54,7 @@ enabled = true   # language server tools; servers launch lazily when used
 # Rules are "Tool" or "Tool(specifier)"; e.g. Bash(go test:*), Edit(src/**).
 mode  = "ask"
 # deny = ["Bash(rm -rf*)", "Bash(git push*)"]   # hard-blocked in every mode
-allow = ["Bash(mkdir -p:*)", "Edit", "run_skill", "Bash(which flutter && flutter --version 2>/dev/null | head -4)", "Bash(which flutter 2>/dev/null || echo \"NOT_FOUND\"; which dart 2>/dev/null || echo \"DART_NOT_FOUND\")", "Bash(ls /Volumes/SYAN/my/fitutor/fitness_coach/lib/main.dart 2>/dev/null && echo \"PROJECT_CREATED\" || echo \"NOT_CREATED\")"]
+allow = ["Bash(mkdir -p:*)", "Edit", "run_skill", "Bash(which flutter && flutter --version 2>/dev/null | head -4)", "Bash(which flutter 2>/dev/null || echo \"NOT_FOUND\"; which dart 2>/dev/null || echo \"DART_NOT_FOUND\")", "Bash(ls /Volumes/SYAN/my/fitutor/fitness_coach/lib/main.dart 2>/dev/null && echo \"PROJECT_CREATED\" || echo \"NOT_CREATED\")", "Bash(cd fitness_coach && ALL_PROXY=socks5://127.0.0.1:7890 HTTPS_PROXY=socks5://127.0.0.1:7890 HTTP_PROXY=socks5://127.0.0.1:7890 flutter test 2>&1)", "Bash(xattr -l /opt/homebrew/share/flutter/bin/cache 2>&1)", "Bash(stat -f \"%N: %Sp %A\" /opt/homebrew/share/flutter/bin/cache /opt/homebrew/share/flutter/bin/cache/engine.stamp.tmp.7484 /opt/homebrew/share/flutter/bin/cache/engine.realm 2>&1)", "Bash(echo $SHELL && which flutter && flutter --version 2>&1 | head -5)"]
 # ask = ["Edit(src/**)"]   # force a prompt even if otherwise allowed
 
 [sandbox]
@@ -64,7 +64,7 @@ allow = ["Bash(mkdir -p:*)", "Edit", "run_skill", "Bash(which flutter && flutter
 # graceful fallback elsewhere); "off" disables it. network allows egress.
 # workspace_root = ""            # default: current working directory
 # allow_write = ["/tmp"]          # extra dirs writers may also modify
-bash    = "enforce"
+bash    = "off"
 network = true
 
 [statusline]

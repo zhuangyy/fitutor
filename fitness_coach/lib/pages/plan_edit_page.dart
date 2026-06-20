@@ -87,9 +87,8 @@ class _PlanEditPageState extends State<PlanEditPage> {
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               itemCount: _exercises.length,
-              onReorder: (oldIndex, newIndex) {
+              onReorderItem: (oldIndex, newIndex) {
                 setState(() {
-                  if (newIndex > oldIndex) newIndex--;
                   final item = _exercises.removeAt(oldIndex);
                   _exercises.insert(newIndex, item);
                 });

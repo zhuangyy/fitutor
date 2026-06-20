@@ -3785,7 +3785,7 @@ class SettingsPage extends StatelessWidget {
               ),
               const Divider(),
               _buildSectionTitle(context, '关于'),
-              const ListTile(title: Text('版本'), trailing: Text('v1.0.0')),
+              const ListTile(title: Text('版本'), trailing: Text('v1.1.1')),
             ],
           );
         },

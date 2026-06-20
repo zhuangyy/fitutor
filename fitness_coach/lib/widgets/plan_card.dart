@@ -3,12 +3,14 @@ import 'package:fitness_coach/models/training_plan.dart';
 
 class PlanCard extends StatelessWidget {
   final TrainingPlan plan;
+  final int index;
   final VoidCallback onTap;
   final VoidCallback? onLongPress;
 
   const PlanCard({
     super.key,
     required this.plan,
+    required this.index,
     required this.onTap,
     this.onLongPress,
   });
@@ -55,6 +57,11 @@ class PlanCard extends StatelessWidget {
                     ),
                   ],
                 ),
+              ),
+              const SizedBox(width: 8),
+              ReorderableDragStartListener(
+                index: index,
+                child: Icon(Icons.drag_handle, color: Colors.grey[400]),
               ),
               Icon(Icons.chevron_right, color: Colors.grey[400]),
             ],

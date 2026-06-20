@@ -42,7 +42,7 @@ class SettingsPage extends StatelessWidget {
               const Divider(),
               _buildSectionTitle(context, '关于'),
               const ListTile(
-                  title: Text('版本'), trailing: Text('v1.1.0')),
+                  title: Text('版本'), trailing: Text('v1.1.1')),
             ],
           );
         },

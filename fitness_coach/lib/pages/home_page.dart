@@ -83,13 +83,15 @@ class _PlanListTab extends StatelessWidget {
           return ReorderableListView.builder(
             padding: const EdgeInsets.all(16),
             itemCount: provider.plans.length,
-            onReorder: (oldIndex, newIndex) {
+            buildDefaultDragHandles: false,
+            onReorderItem: (oldIndex, newIndex) {
               provider.reorderPlans(oldIndex, newIndex);
             },
             itemBuilder: (context, index) {
               final plan = provider.plans[index];
               return PlanCard(
                 key: ValueKey(plan.id),
+                index: index,
                 plan: plan,
                 onTap: () => _onStartWorkout(context, plan),
                 onLongPress: () => _onEditPlan(context, plan),

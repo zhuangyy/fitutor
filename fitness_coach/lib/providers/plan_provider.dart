@@ -57,6 +57,9 @@ class PlanProvider extends ChangeNotifier {
     if (oldIndex == newIndex) return;
     final plan = _plans.removeAt(oldIndex);
     _plans.insert(newIndex, plan);
+    // 立即通知 UI 刷新，避免 ReorderableListView 动画完成后拿到旧数据
+    notifyListeners();
+    // 异步写回 sort_order
     for (int i = 0; i < _plans.length; i++) {
       if (_plans[i].sortOrder != i) {
         _plans[i] = _plans[i].copyWith(sortOrder: i);
@@ -64,6 +67,5 @@ class PlanProvider extends ChangeNotifier {
         await _planDao.updatePlan(_plans[i]);
       }
     }
-    notifyListeners();
   }
 }
