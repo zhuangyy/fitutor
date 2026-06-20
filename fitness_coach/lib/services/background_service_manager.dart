@@ -37,4 +37,13 @@ class BackgroundServiceManager {
       } catch (_) {}
     }
   }
+
+  /// 播放短促提示音（Android 使用 ToneGenerator）。
+  Future<void> playBeep() async {
+    if (Platform.isAndroid) {
+      try {
+        await _androidChannel.invokeMethod('playBeep');
+      } catch (_) {}
+    }
+  }
 }

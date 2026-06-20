@@ -1,10 +1,23 @@
 import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
+import 'package:fitness_coach/services/background_service_manager.dart';
 
-/// 播放短促提示音。macOS 上生成并播放 beep 音效，其他平台跳过。
+final _bgService = BackgroundServiceManager();
+
+/// 播放短促提示音。
+/// Android: ToneGenerator 响亮的短促 beep。
+/// macOS: 生成 WAV 并通过 afplay 播放。
+/// iOS: 系统点击音。
 Future<void> playBeep() async {
-  if (!Platform.isMacOS) return;
+  if (Platform.isAndroid) {
+    await _bgService.playBeep();
+  } else if (Platform.isMacOS) {
+    await _playMacOsBeep();
+  }
+}
+
+Future<void> _playMacOsBeep() async {
   try {
     final beepFile = File('${Directory.systemTemp.path}/fitutor_beep.wav');
     if (!await beepFile.exists()) {

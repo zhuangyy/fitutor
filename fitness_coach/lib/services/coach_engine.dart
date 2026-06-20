@@ -197,34 +197,34 @@ class CoachEngine {
       // 最后5秒：震动 + 倒数
       if (remaining <= 5) {
         _haptic.countdownBuzz(remaining);
+        _tts.stop();
         _tts.speak('$remaining');
       }
     });
   }
 
-  void _enterAnnouncing() {
-    final exercise = _state.exercises[_state.currentExerciseIndex];
-    _emit(_state.copyWith(
-      phase: CoachPhase.announcing,
-      currentExercise: exercise,
-      currentSetIndex: 0,
-      totalSetsForCurrentExercise: exercise.sets,
-      remainingSeconds: 0,
-    ));
-    _tts.speak(_announcementText(exercise));
-    // TTS 排队：动作信息 → "开始" → 计时器启动
-    _beginWorking();
-  }
-
   Future<void> _beginWorking() async {
     final exercise = _state.currentExercise!;
     final workTime = exercise.workSeconds;
-    _emitState(CoachPhase.working, remaining: workTime);
+    // 先出倒计时界面，再播语音
+    _emit(_state.copyWith(
+      phase: CoachPhase.working,
+      currentExercise: exercise,
+      currentSetIndex: _state.currentSetIndex,
+      totalSetsForCurrentExercise: exercise.sets,
+      remainingSeconds: workTime,
+    ));
+    await _tts.speak(_announcementText(exercise));
+    // 播报期间可能被 stop() 打断
+    if (_state.phase != CoachPhase.working) return;
     await _tts.speak('开始');
     await Future.delayed(const Duration(seconds: 1));
     playBeep();
     _startTimer(workTime, _onWorkComplete);
   }
+
+  // _enterAnnouncing 合并到 _beginWorking，先出界面再播语音
+  Future<void> _enterAnnouncing() => _beginWorking();
 
   Future<void> _onWorkComplete() async {
     final exercise = _state.currentExercise!;

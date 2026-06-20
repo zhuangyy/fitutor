@@ -82,11 +82,10 @@ void main() {
 
     engine.start();
 
-    // Wait for full flow: announcing(instant) → beep(~1.1s) → working(1s) → completed
-    await Future.delayed(const Duration(seconds: 4));
+    // Wait for full flow: working(instant + TTS + 1s delay) → completed
+    await Future.delayed(const Duration(seconds: 5));
     await sub.cancel();
 
-    expect(phases.contains(CoachPhase.announcing), true);
     expect(phases.contains(CoachPhase.working), true);
     expect(phases.contains(CoachPhase.completed), true);
   });

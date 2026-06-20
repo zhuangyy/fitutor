@@ -48,4 +48,9 @@ void main() async {
     hapticService: hapticService,
     notificationService: notificationService,
   ));
+
+  // 首帧渲染后再播放欢迎词，避免白屏时发声
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    ttsService.warmUp();
+  });
 }
