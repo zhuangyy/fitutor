@@ -303,6 +303,7 @@ class _ExerciseManagePageState extends State<ExerciseManagePage> {
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
+        heroTag: 'add_exercise',
         onPressed: _addCustom,
         icon: const Icon(Icons.add),
         label: const Text('自定义动作'),

@@ -101,6 +101,7 @@ class _PlanListTab extends StatelessWidget {
         },
       ),
       floatingActionButton: FloatingActionButton.extended(
+        heroTag: 'create_plan',
         onPressed: () => _onCreatePlan(context),
         icon: const Icon(Icons.add),
         label: const Text('新建计划'),
