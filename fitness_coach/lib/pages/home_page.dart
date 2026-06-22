@@ -20,12 +20,13 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _currentTab = 0;
+  final _historyKey = GlobalKey<HistoryPageState>();
 
-  final _pages = const [
-    _PlanListTab(),
-    ExerciseManagePage(),
-    HistoryPage(),
-    SettingsPage(),
+  late final _pages = [
+    _PlanListTab(historyKey: _historyKey),
+    const ExerciseManagePage(),
+    HistoryPage(key: _historyKey),
+    const SettingsPage(),
   ];
 
   @override
@@ -52,7 +53,8 @@ class _HomePageState extends State<HomePage> {
 }
 
 class _PlanListTab extends StatelessWidget {
-  const _PlanListTab();
+  final GlobalKey<HistoryPageState> historyKey;
+  const _PlanListTab({required this.historyKey});
 
   @override
   Widget build(BuildContext context) {
@@ -129,8 +131,9 @@ class _PlanListTab extends StatelessWidget {
     if (confirmed == true && context.mounted) {
       final interval = context.read<SettingsProvider>().reminderInterval;
       context.read<WorkoutProvider>().loadPlan(plan, intervalSeconds: interval);
-      Navigator.push(
+      await Navigator.push(
           context, MaterialPageRoute(builder: (_) => const WorkoutPage()));
+      historyKey.currentState?.refresh();
     }
   }
 

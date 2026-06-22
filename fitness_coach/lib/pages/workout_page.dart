@@ -106,7 +106,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
           _buildActiveView(context, state),
         const Spacer(),
         if (!isPaused) _buildBottomInfo(context, state),
-        const SizedBox(height: 24),
+        const SizedBox(height: 8),
       ],
     );
   }
@@ -237,15 +237,11 @@ class _WorkoutPageState extends State<WorkoutPage> {
     final progress = state.overallProgress;
     final exercises = state.exercises;
     final currentIdx = state.currentExerciseIndex;
-    final prevExercise =
-        currentIdx > 0 ? exercises[currentIdx - 1] : null;
-    final nextExercise = currentIdx < exercises.length - 1
-        ? exercises[currentIdx + 1]
-        : null;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(4),
@@ -259,16 +255,58 @@ class _WorkoutPageState extends State<WorkoutPage> {
           Text('${currentIdx + 1} / ${state.totalExercises} 动作',
               style: TextStyle(color: Colors.grey[500], fontSize: 12)),
           const SizedBox(height: 8),
-          if (prevExercise != null)
-            Text('上一动作：${prevExercise.exerciseName} ✓',
-                style: TextStyle(color: Colors.grey[500])),
-          if (nextExercise != null)
-            Text('下一动作：${nextExercise.exerciseName}',
-                style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.blueGrey[600],
-                )),
+          SizedBox(
+            height: 104,
+            child: ListView.builder(
+              itemCount: exercises.length,
+              itemBuilder: (context, i) {
+                final ex = exercises[i];
+                final isPast = i < currentIdx;
+                final isCurrent = i == currentIdx;
+
+                IconData icon;
+                Color iconColor;
+                if (isPast) {
+                  icon = Icons.check_circle;
+                  iconColor = Colors.green;
+                } else if (isCurrent) {
+                  icon = Icons.play_circle_filled;
+                  iconColor = Theme.of(context).colorScheme.primary;
+                } else {
+                  icon = Icons.circle_outlined;
+                  iconColor = Colors.grey[400]!;
+                }
+
+                return SizedBox(
+                  height: 28,
+                  child: Row(
+                    children: [
+                      Icon(icon, size: 16, color: iconColor),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          ex.exerciseName ?? '',
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: isCurrent ? FontWeight.w600 : FontWeight.normal,
+                            color: isPast ? Colors.grey[500] : null,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      Text(
+                        '${ex.sets}组',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey[500],
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
         ],
       ),
     );

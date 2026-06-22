@@ -43,6 +43,10 @@ class WorkoutProvider extends ChangeNotifier with WidgetsBindingObserver {
 
   CoachState get coachState => _coachState;
 
+  /// 完成的训练次数，每次保存后递增，供 HistoryPage 判断是否需要刷新
+  int _completedSessionCount = 0;
+  int get completedSessionCount => _completedSessionCount;
+
   void loadPlan(TrainingPlan plan, {int intervalSeconds = 0}) {
     _planName = plan.name;
     _engine.reminderIntervalSeconds = intervalSeconds;
@@ -88,6 +92,8 @@ class WorkoutProvider extends ChangeNotifier with WidgetsBindingObserver {
     );
 
     await _sessionDao.insert(session);
+    _completedSessionCount++;
+    notifyListeners();
   }
 
   @override

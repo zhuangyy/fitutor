@@ -6,11 +6,15 @@ import 'package:fitness_coach/pages/history_detail_page.dart';
 class HistoryPage extends StatefulWidget {
   const HistoryPage({super.key});
 
+  static HistoryPageState? of(BuildContext context) {
+    return context.findAncestorStateOfType<HistoryPageState>();
+  }
+
   @override
-  State<HistoryPage> createState() => _HistoryPageState();
+  State<HistoryPage> createState() => HistoryPageState();
 }
 
-class _HistoryPageState extends State<HistoryPage> {
+class HistoryPageState extends State<HistoryPage> {
   final SessionDao _dao = SessionDao();
   List<WorkoutSession> _sessions = [];
   bool _loading = true;
@@ -23,10 +27,18 @@ class _HistoryPageState extends State<HistoryPage> {
 
   Future<void> _loadSessions() async {
     final sessions = await _dao.getAll();
+    if (!mounted) return;
     setState(() {
       _sessions = sessions;
       _loading = false;
     });
+  }
+
+  /// 供外部调用以刷新列表（如训练完成后）
+  void refresh() {
+    _loading = true;
+    if (mounted) setState(() {});
+    _loadSessions();
   }
 
   @override
