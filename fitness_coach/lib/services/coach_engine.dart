@@ -10,7 +10,8 @@ enum CoachPhase {
   announcing,
   working,
   paused,
-  resting,
+  resting,              // 组间休息
+  postExerciseResting,   // 动作完成后休息
   transitioning,
   completed,
 }
@@ -89,6 +90,7 @@ class CoachEngine {
 
   Timer? _timer;
   DateTime? _timerBase;
+  Future<void> Function()? _timerOnDone;
   CoachPhase _phaseBeforePause = CoachPhase.working;
   int _frozenRemaining = 0;
 
@@ -118,7 +120,8 @@ class CoachEngine {
 
   void pause() {
     if (_state.phase != CoachPhase.working &&
-        _state.phase != CoachPhase.resting) return;
+        _state.phase != CoachPhase.resting &&
+        _state.phase != CoachPhase.postExerciseResting) return;
     _timer?.cancel();
     _phaseBeforePause = _state.phase;
     _frozenRemaining = _state.remainingSeconds;
@@ -136,9 +139,10 @@ class CoachEngine {
   }
 
   void skipRest() {
-    if (_state.phase != CoachPhase.resting) return;
+    if (_state.phase != CoachPhase.resting &&
+        _state.phase != CoachPhase.postExerciseResting) return;
     _timer?.cancel();
-    _onRestComplete();
+    _timerOnDone?.call();
   }
 
   void stop() {
@@ -164,6 +168,7 @@ class CoachEngine {
   }
 
   void _startTimer(int seconds, Future<void> Function() onDone) {
+    _timerOnDone = onDone;
     _timerBase = DateTime.now();
     _emit(_state.copyWith(phase: _state.phase, remainingSeconds: seconds));
 
@@ -231,8 +236,17 @@ class CoachEngine {
     final newSetIndex = _state.currentSetIndex + 1;
 
     if (newSetIndex >= exercise.sets) {
-      await _tts.speak('${exercise.exerciseName ?? '动作'}完成');
-      _enterTransitioning();
+      final afterRest = exercise.afterRestSeconds;
+      if (afterRest > 0) {
+        _emitState(CoachPhase.postExerciseResting, remaining: afterRest);
+        await _tts.speak('${exercise.exerciseName ?? '动作'}完成，休息${afterRest}秒');
+        await Future.delayed(const Duration(seconds: 1));
+        playBeep();
+        _startTimer(afterRest, _onPostExerciseRestComplete);
+      } else {
+        await _tts.speak('${exercise.exerciseName ?? '动作'}完成');
+        _enterTransitioning();
+      }
     } else {
       _emit(_state.copyWith(currentSetIndex: newSetIndex));
       _emitState(CoachPhase.resting, remaining: exercise.restSeconds);
@@ -253,6 +267,10 @@ class CoachEngine {
     await Future.delayed(const Duration(seconds: 1));
     playBeep();
     _startTimer(exercise.workSeconds, _onWorkComplete);
+  }
+
+  Future<void> _onPostExerciseRestComplete() async {
+    _enterTransitioning();
   }
 
   void _enterTransitioning() {

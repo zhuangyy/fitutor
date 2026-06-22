@@ -4,9 +4,10 @@ class PlanExercise {
   final int exerciseId;
   final int sortOrder;
   final int sets;
-  final int? reps;           // 力量训练有次数，计时训练为 null
-  final int workSeconds;     // 每组训练时长（秒）
-  final int restSeconds;     // 组间休息（秒）
+  final int? reps;            // 力量训练有次数，计时训练为 null
+  final int workSeconds;      // 每组训练时长（秒）
+  final int restSeconds;      // 组间休息（秒）
+  final int afterRestSeconds; // 动作完成后一次性休息（秒）
   final String? notes;
 
   // 关联数据（非数据库字段，由 DAO 层 join 填充）
@@ -24,6 +25,7 @@ class PlanExercise {
     this.reps,
     required this.workSeconds,
     required this.restSeconds,
+    this.afterRestSeconds = 0,
     this.notes,
     this.exerciseName,
     this.exerciseCategory,
@@ -41,6 +43,7 @@ class PlanExercise {
       reps: map['reps'] as int?,
       workSeconds: map['work_seconds'] as int,
       restSeconds: map['rest_seconds'] as int,
+      afterRestSeconds: (map['after_rest_seconds'] as int?) ?? 0,
       notes: map['notes'] as String?,
       exerciseName: map['exercise_name'] as String?,
       exerciseCategory: map['exercise_category'] as String?,
@@ -59,6 +62,7 @@ class PlanExercise {
       'reps': reps,
       'work_seconds': workSeconds,
       'rest_seconds': restSeconds,
+      'after_rest_seconds': afterRestSeconds,
       'notes': notes,
     };
   }
@@ -72,6 +76,7 @@ class PlanExercise {
     int? reps,
     int? workSeconds,
     int? restSeconds,
+    int? afterRestSeconds,
     String? notes,
   }) {
     return PlanExercise(
@@ -83,6 +88,7 @@ class PlanExercise {
       reps: reps ?? this.reps,
       workSeconds: workSeconds ?? this.workSeconds,
       restSeconds: restSeconds ?? this.restSeconds,
+      afterRestSeconds: afterRestSeconds ?? this.afterRestSeconds,
       notes: notes ?? this.notes,
       exerciseName: exerciseName,
       exerciseCategory: exerciseCategory,
@@ -91,6 +97,7 @@ class PlanExercise {
     );
   }
 
-  /// 该动作的总时长估算（秒）: 组数 × (训练时长 + 休息时间)
-  int get estimatedDurationSeconds => sets * (workSeconds + restSeconds);
+  /// 该动作的总时长估算（秒）: 组数 × (训练时长 + 休息时间) + 完成后休息
+  int get estimatedDurationSeconds =>
+      sets * (workSeconds + restSeconds) + afterRestSeconds;
 }

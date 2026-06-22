@@ -25,7 +25,7 @@ class DatabaseHelper {
 
     return await openDatabase(
       path,
-      version: 3,
+      version: 4,
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
     );
@@ -67,6 +67,7 @@ class DatabaseHelper {
         reps INTEGER,
         work_seconds INTEGER NOT NULL DEFAULT 45,
         rest_seconds INTEGER NOT NULL DEFAULT 60,
+        after_rest_seconds INTEGER NOT NULL DEFAULT 0,
         notes TEXT,
         FOREIGN KEY (plan_id) REFERENCES training_plans(id) ON DELETE CASCADE,
         FOREIGN KEY (exercise_id) REFERENCES exercises(id) ON DELETE CASCADE
@@ -94,6 +95,10 @@ class DatabaseHelper {
     if (oldVersion < 3) {
       await db.execute(
           'ALTER TABLE exercises ADD COLUMN sort_order INTEGER NOT NULL DEFAULT 0');
+    }
+    if (oldVersion < 4) {
+      await db.execute(
+          'ALTER TABLE plan_exercises ADD COLUMN after_rest_seconds INTEGER NOT NULL DEFAULT 0');
     }
   }
 

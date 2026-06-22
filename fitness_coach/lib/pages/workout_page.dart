@@ -54,7 +54,8 @@ class _WorkoutPageState extends State<WorkoutPage> {
 
               final canTapPause = settings.tapToPause &&
                   (state.phase == CoachPhase.working ||
-                      state.phase == CoachPhase.resting);
+                      state.phase == CoachPhase.resting ||
+                      state.phase == CoachPhase.postExerciseResting);
 
               return GestureDetector(
                 behavior: HitTestBehavior.translucent,
@@ -135,11 +136,25 @@ class _WorkoutPageState extends State<WorkoutPage> {
       );
     }
 
-    if (phase == CoachPhase.working || phase == CoachPhase.resting) {
-      final isWorking = phase == CoachPhase.working;
-      final total = isWorking
+    if (phase == CoachPhase.working ||
+        phase == CoachPhase.resting ||
+        phase == CoachPhase.postExerciseResting) {
+      final bool isWorking = phase == CoachPhase.working;
+      final bool isPostExercise = phase == CoachPhase.postExerciseResting;
+      final int total = isWorking
           ? (state.currentExercise?.workSeconds ?? 45)
-          : (state.currentExercise?.restSeconds ?? 60);
+          : isPostExercise
+              ? (state.currentExercise?.afterRestSeconds ?? 0)
+              : (state.currentExercise?.restSeconds ?? 60);
+
+      Color ringColor;
+      if (isWorking) {
+        ringColor = Colors.red;
+      } else if (isPostExercise) {
+        ringColor = Colors.green;
+      } else {
+        ringColor = Colors.orange;
+      }
 
       return Column(
         mainAxisSize: MainAxisSize.min,
@@ -148,7 +163,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
             remainingSeconds: state.remainingSeconds,
             totalSeconds: total,
             size: 200,
-            color: isWorking ? null : Colors.orange,
+            color: ringColor,
           ),
           const SizedBox(height: 24),
           Text(
@@ -162,7 +177,9 @@ class _WorkoutPageState extends State<WorkoutPage> {
           Text(
             isWorking
                 ? '第 ${state.currentSetIndex + 1} / ${state.totalSetsForCurrentExercise} 组'
-                : '休息中...',
+                : isPostExercise
+                    ? '动作完成，休息中...'
+                    : '组间休息中...',
             style: TextStyle(fontSize: 18, color: Colors.grey[600]),
           ),
           const SizedBox(height: 16),

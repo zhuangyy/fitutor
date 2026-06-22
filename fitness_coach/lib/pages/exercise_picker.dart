@@ -8,6 +8,7 @@ class ExercisePicker extends StatefulWidget {
   final int? preReps;
   final int preWorkSeconds;
   final int preRestSeconds;
+  final int preAfterRestSeconds;
 
   const ExercisePicker({
     super.key,
@@ -16,6 +17,7 @@ class ExercisePicker extends StatefulWidget {
     this.preReps,
     this.preWorkSeconds = 45,
     this.preRestSeconds = 60,
+    this.preAfterRestSeconds = 0,
   });
 
   @override
@@ -36,6 +38,7 @@ class _ExercisePickerState extends State<ExercisePicker> {
   int? _reps;
   late int _workSeconds;
   late int _restSeconds;
+  int _afterRestSeconds = 0;
 
   bool _showParams = false;
 
@@ -46,6 +49,7 @@ class _ExercisePickerState extends State<ExercisePicker> {
     _reps = widget.preReps;
     _workSeconds = widget.preWorkSeconds;
     _restSeconds = widget.preRestSeconds;
+    _afterRestSeconds = widget.preAfterRestSeconds;
     _searchFocus.addListener(() {
       setState(() => _showRecent = _searchFocus.hasFocus &&
           _searchController.text.isEmpty);
@@ -210,6 +214,9 @@ class _ExercisePickerState extends State<ExercisePicker> {
             const SizedBox(height: 12),
             _buildNumberField(
                 '组间休息（秒）', _restSeconds, (v) => _restSeconds = v),
+            const SizedBox(height: 12),
+            _buildNumberField(
+                '动作完成后休息（秒）', _afterRestSeconds, (v) => _afterRestSeconds = v),
             const SizedBox(height: 24),
             SizedBox(
               width: double.infinity,
@@ -222,6 +229,7 @@ class _ExercisePickerState extends State<ExercisePicker> {
                     'reps': _reps,
                     'workSeconds': _workSeconds,
                     'restSeconds': _restSeconds,
+                    'afterRestSeconds': _afterRestSeconds,
                   });
                 },
                 child: const Text('添加到计划'),

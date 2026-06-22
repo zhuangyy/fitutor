@@ -101,7 +101,7 @@ class _PlanEditPageState extends State<PlanEditPage> {
                     leading: const Icon(Icons.drag_handle),
                     title: Text(pe.exerciseName ?? '动作${index + 1}'),
                     subtitle: Text(
-                        '${pe.sets}组 · ${pe.workSeconds}秒/组 · 休息${pe.restSeconds}秒'),
+                        '${pe.sets}组 · ${pe.workSeconds}秒/组 · 组休${pe.restSeconds}秒${pe.afterRestSeconds > 0 ? ' · 动休${pe.afterRestSeconds}秒' : ''}'),
                     trailing: IconButton(
                       icon: const Icon(Icons.delete_outline, color: Colors.red),
                       onPressed: () =>
@@ -143,6 +143,7 @@ class _PlanEditPageState extends State<PlanEditPage> {
           reps: result['reps'] as int?,
           workSeconds: result['workSeconds'] as int,
           restSeconds: result['restSeconds'] as int,
+          afterRestSeconds: result['afterRestSeconds'] as int? ?? 0,
           exerciseName: result['exerciseName'] as String?,
         ));
       });
@@ -160,6 +161,7 @@ class _PlanEditPageState extends State<PlanEditPage> {
         preReps: existing.reps,
         preWorkSeconds: existing.workSeconds,
         preRestSeconds: existing.restSeconds,
+        preAfterRestSeconds: existing.afterRestSeconds,
       ),
     );
     if (result != null) {
@@ -172,6 +174,7 @@ class _PlanEditPageState extends State<PlanEditPage> {
           reps: result['reps'] as int?,
           workSeconds: result['workSeconds'] as int,
           restSeconds: result['restSeconds'] as int,
+          afterRestSeconds: result['afterRestSeconds'] as int? ?? 0,
           exerciseName: result['exerciseName'] as String?,
         );
       });
