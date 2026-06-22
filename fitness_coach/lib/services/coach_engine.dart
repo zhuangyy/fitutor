@@ -238,9 +238,13 @@ class CoachEngine {
     if (newSetIndex >= exercise.sets) {
       final afterRest = exercise.afterRestSeconds;
       if (afterRest > 0) {
+        _timerOnDone = _onPostExerciseRestComplete;
         _emitState(CoachPhase.postExerciseResting, remaining: afterRest);
         await _tts.speak('${exercise.exerciseName ?? '动作'}完成，休息${afterRest}秒');
+        // 播报期间可能被 skip 打断
+        if (_state.phase != CoachPhase.postExerciseResting) return;
         await Future.delayed(const Duration(seconds: 1));
+        if (_state.phase != CoachPhase.postExerciseResting) return;
         playBeep();
         _startTimer(afterRest, _onPostExerciseRestComplete);
       } else {
@@ -249,9 +253,13 @@ class CoachEngine {
       }
     } else {
       _emit(_state.copyWith(currentSetIndex: newSetIndex));
+      _timerOnDone = _onRestComplete;
       _emitState(CoachPhase.resting, remaining: exercise.restSeconds);
       await _tts.speak('休息${exercise.restSeconds}秒');
+      // 播报期间可能被 skip 打断
+      if (_state.phase != CoachPhase.resting) return;
       await Future.delayed(const Duration(seconds: 1));
+      if (_state.phase != CoachPhase.resting) return;
       playBeep();
       _startTimer(exercise.restSeconds, _onRestComplete);
     }
@@ -309,6 +317,9 @@ class CoachEngine {
         break;
       case CoachPhase.resting:
         await _onRestComplete();
+        break;
+      case CoachPhase.postExerciseResting:
+        await _onPostExerciseRestComplete();
         break;
       default:
         break;
