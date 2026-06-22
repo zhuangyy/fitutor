@@ -9,7 +9,7 @@
 
 **Tech Stack:** Flutter 3.x / Dart 3.x / sqflite / Provider / flutter_tts / flutter_local_notifications
 
-**参考设计文档:** `docs/superpowers/specs/2024-12-22-fitness-coach-design.md`
+**参考设计文档:** `docs/superpowers/specs/fitness-coach-design.md`
 
 ---
 

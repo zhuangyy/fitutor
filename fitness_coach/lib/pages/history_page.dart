@@ -54,11 +54,11 @@ class HistoryPageState extends State<HistoryPage> {
                     children: [
                       Icon(Icons.history, size: 64, color: Colors.grey[400]),
                       const SizedBox(height: 16),
-                      Text('还没有训练记录',
+                      Text('记录你的汗水',
                           style:
                               TextStyle(fontSize: 18, color: Colors.grey[600])),
                       const SizedBox(height: 8),
-                      Text('去完成第一次训练吧！',
+                      Text('完成训练后，这里会记录每一次的坚持',
                           style: TextStyle(color: Colors.grey[500])),
                     ],
                   ),
