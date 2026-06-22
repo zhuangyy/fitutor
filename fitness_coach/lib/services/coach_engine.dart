@@ -194,7 +194,7 @@ class CoachEngine {
         if (remaining % interval == 0) {
           lastAnnouncedRemaining = remaining;
           final prefix =
-              _state.phase == CoachPhase.resting ? '休息' : '';
+              (_state.phase == CoachPhase.resting || _state.phase == CoachPhase.postExerciseResting) ? '休息' : '';
           _tts.speak('${prefix}还剩余$remaining秒');
         }
       }
