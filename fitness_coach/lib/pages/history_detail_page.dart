@@ -58,18 +58,25 @@ class HistoryDetailPage extends StatelessWidget {
             Text('总时长：${session.formattedDuration}',
                 style: TextStyle(color: Colors.grey[600])),
             const Divider(height: 32),
-            ...session.completedExercises.map((e) => Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
-                  child: Row(
-                    children: [
-                      const Icon(Icons.check_circle,
-                          color: Colors.green, size: 20),
-                      const SizedBox(width: 8),
-                      Text('${e.exerciseName}  '
-                          '${e.completedSets}/${e.plannedSets}组'),
-                    ],
-                  ),
-                )),
+            ...session.completedExercises.map((e) {
+                  final done = e.completedSets >= e.plannedSets;
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: Row(
+                      children: [
+                        Icon(
+                            done
+                                ? Icons.check_circle
+                                : Icons.warning_amber_rounded,
+                            color: done ? Colors.green : Colors.orange,
+                            size: 20),
+                        const SizedBox(width: 8),
+                        Text('${e.exerciseName}  '
+                            '${e.completedSets}/${e.plannedSets}组'),
+                      ],
+                    ),
+                  );
+                }),
           ],
         ),
       ),

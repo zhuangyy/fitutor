@@ -71,9 +71,16 @@ class HistoryPageState extends State<HistoryPage> {
                     return Card(
                       margin: const EdgeInsets.only(bottom: 8),
                       child: ListTile(
-                        leading: const Icon(Icons.check_circle_outline,
-                            color: Colors.green),
-                        title: Text(session.planName),
+                        leading: Icon(
+                            session.finishedAt != null
+                                ? Icons.check_circle_outline
+                                : Icons.cancel_outlined,
+                            color: session.finishedAt != null
+                                ? Colors.green
+                                : Colors.orange),
+                        title: Text(session.finishedAt != null
+                            ? session.planName
+                            : '${session.planName} (未完成)'),
                         subtitle: Text(
                             '${session.formattedDate} · ${session.completedExercises.length}动作 · ${session.formattedDuration}'),
                         trailing: const Icon(Icons.chevron_right),

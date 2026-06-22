@@ -72,7 +72,8 @@ class _WorkoutPageState extends State<WorkoutPage> {
   Widget _buildWorkoutView(BuildContext context, CoachState state) {
     final isPaused = state.phase == CoachPhase.paused;
     final showPauseBtn = state.phase == CoachPhase.working ||
-        state.phase == CoachPhase.resting;
+        state.phase == CoachPhase.resting ||
+        state.phase == CoachPhase.postExerciseResting;
 
     return Column(
       children: [
@@ -256,7 +257,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
               style: TextStyle(color: Colors.grey[500], fontSize: 12)),
           const SizedBox(height: 8),
           SizedBox(
-            height: 104,
+            height: 112,
             child: ListView.builder(
               itemCount: exercises.length,
               itemBuilder: (context, i) {
@@ -278,27 +279,32 @@ class _WorkoutPageState extends State<WorkoutPage> {
                 }
 
                 return SizedBox(
-                  height: 28,
+                  height: 32,
                   child: Row(
                     children: [
-                      Icon(icon, size: 16, color: iconColor),
-                      const SizedBox(width: 8),
+                      Icon(icon, size: 18, color: iconColor),
+                      const SizedBox(width: 10),
                       Expanded(
                         child: Text(
                           ex.exerciseName ?? '',
                           style: TextStyle(
-                            fontSize: 13,
-                            fontWeight: isCurrent ? FontWeight.w600 : FontWeight.normal,
-                            color: isPast ? Colors.grey[500] : null,
+                            fontSize: 15,
+                            fontWeight: isCurrent ? FontWeight.w700 : FontWeight.w500,
+                            color: isPast
+                                ? Colors.grey[400]
+                                : isCurrent
+                                    ? null
+                                    : Colors.grey[700],
                           ),
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
                       Text(
                         '${ex.sets}组',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey[500],
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.grey,
                         ),
                       ),
                     ],

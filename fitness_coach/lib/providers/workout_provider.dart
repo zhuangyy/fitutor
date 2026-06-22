@@ -23,7 +23,7 @@ class WorkoutProvider extends ChangeNotifier with WidgetsBindingObserver {
     _sub = _engine.stateStream.listen((state) {
       _coachState = state;
       if (state.phase == CoachPhase.completed) {
-        _saveSession();
+        _saveSession(completed: true);
       }
       notifyListeners();
     });
@@ -65,20 +65,33 @@ class WorkoutProvider extends ChangeNotifier with WidgetsBindingObserver {
   void skipRest() => _engine.skipRest();
 
   void stopWorkout() {
+    _saveSession(completed: false);
     _engine.stop();
     _bgService.stopWorkout();
   }
 
-  Future<void> _saveSession() async {
+  Future<void> _saveSession({bool completed = true}) async {
     if (_workoutStartedAt == null) return;
     final now = DateTime.now();
     final duration = now.difference(_workoutStartedAt!).inSeconds;
 
-    final exercises = _coachState.exercises.map((e) {
+    final currentIdx = _coachState.currentExerciseIndex;
+    final currentSet = _coachState.currentSetIndex;
+    final exercises = _coachState.exercises.asMap().entries.map((entry) {
+      final i = entry.key;
+      final e = entry.value;
+      int done;
+      if (i < currentIdx) {
+        done = e.sets; // 前面已完成
+      } else if (i == currentIdx) {
+        done = currentSet; // 当前动作完成了 N 组
+      } else {
+        done = 0; // 还没开始
+      }
       return CompletedExercise(
         exerciseName: e.exerciseName ?? '未知动作',
         plannedSets: e.sets,
-        completedSets: e.sets,
+        completedSets: completed ? e.sets : done,
       );
     }).toList();
 
@@ -86,7 +99,7 @@ class WorkoutProvider extends ChangeNotifier with WidgetsBindingObserver {
       planId: 0,
       planName: _planName ?? '',
       startedAt: _workoutStartedAt!.toIso8601String(),
-      finishedAt: now.toIso8601String(),
+      finishedAt: completed ? now.toIso8601String() : null,
       durationSec: duration,
       completedExercises: exercises,
     );
