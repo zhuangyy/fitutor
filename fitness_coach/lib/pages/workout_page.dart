@@ -264,7 +264,11 @@ class _WorkoutPageState extends State<WorkoutPage> {
                 style: TextStyle(color: Colors.grey[500])),
           if (nextExercise != null)
             Text('下一动作：${nextExercise.exerciseName}',
-                style: TextStyle(color: Colors.grey[500])),
+                style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.blueGrey[600],
+                )),
         ],
       ),
     );

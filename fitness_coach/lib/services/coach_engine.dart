@@ -222,6 +222,9 @@ class CoachEngine {
     await _tts.speak(_announcementText(exercise));
     // 播报期间可能被 stop() 打断
     if (_state.phase != CoachPhase.working) return;
+    await _tts.speak('第${_state.currentSetIndex + 1}组');
+    // 播报期间可能被 stop() 打断
+    if (_state.phase != CoachPhase.working) return;
     await _tts.speak('开始');
     await Future.delayed(const Duration(seconds: 1));
     playBeep();
@@ -234,13 +237,24 @@ class CoachEngine {
   Future<void> _onWorkComplete() async {
     final exercise = _state.currentExercise!;
     final newSetIndex = _state.currentSetIndex + 1;
-
+  
     if (newSetIndex >= exercise.sets) {
       final afterRest = exercise.afterRestSeconds;
       if (afterRest > 0) {
         _timerOnDone = _onPostExerciseRestComplete;
         _emitState(CoachPhase.postExerciseResting, remaining: afterRest);
-        await _tts.speak('${exercise.exerciseName ?? '动作'}完成，休息${afterRest}秒');
+        // 播报下一动作信息
+        final nextIdx = _state.currentExerciseIndex + 1;
+        final nextExercise = nextIdx < _state.totalExercises
+            ? _state.exercises[nextIdx]
+            : null;
+        if (nextExercise != null) {
+          await _tts.speak(
+              '${exercise.exerciseName ?? '动作'}完成，休息${afterRest}秒。下一动作：${_announcementText(nextExercise)}');
+        } else {
+          await _tts.speak(
+              '${exercise.exerciseName ?? '动作'}完成，休息${afterRest}秒');
+        }
         // 播报期间可能被 skip 打断
         if (_state.phase != CoachPhase.postExerciseResting) return;
         await Future.delayed(const Duration(seconds: 1));
@@ -255,7 +269,7 @@ class CoachEngine {
       _emit(_state.copyWith(currentSetIndex: newSetIndex));
       _timerOnDone = _onRestComplete;
       _emitState(CoachPhase.resting, remaining: exercise.restSeconds);
-      await _tts.speak('休息${exercise.restSeconds}秒');
+      await _tts.speak('${exercise.exerciseName ?? '动作'}第${newSetIndex}组完成, 休息${exercise.restSeconds}秒');
       // 播报期间可能被 skip 打断
       if (_state.phase != CoachPhase.resting) return;
       await Future.delayed(const Duration(seconds: 1));
