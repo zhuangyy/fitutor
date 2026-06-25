@@ -184,12 +184,17 @@ class _WorkoutPageState extends State<WorkoutPage> {
             style: TextStyle(fontSize: 18, color: Colors.grey[600]),
           ),
           const SizedBox(height: 16),
-          if (!isWorking)
-            TextButton.icon(
+          Visibility(
+            maintainSize: true,
+            maintainAnimation: true,
+            maintainState: true,
+            visible: !isWorking,
+            child: TextButton.icon(
               onPressed: () => context.read<WorkoutProvider>().skipRest(),
               icon: const Icon(Icons.skip_next),
               label: const Text('跳过休息'),
             ),
+          ),
         ],
       );
     }
