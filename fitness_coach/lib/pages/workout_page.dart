@@ -254,7 +254,11 @@ class _WorkoutPageState extends State<WorkoutPage> {
           ),
           const SizedBox(height: 4),
           Text('${currentIdx + 1} / ${state.totalExercises} 动作',
-              style: TextStyle(color: Colors.grey[500], fontSize: 12)),
+              style: TextStyle(
+                color: Colors.grey[500],
+                fontSize: 12,
+                fontFeatures: [FontFeature.tabularFigures()],
+              )),
           const SizedBox(height: 8),
           SizedBox(
             height: 112,

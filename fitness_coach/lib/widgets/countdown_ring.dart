@@ -42,9 +42,11 @@ class CountdownRing extends StatelessWidget {
               Text(
                 '$remainingSeconds',
                 style: TextStyle(
-                    fontSize: 56,
-                    fontWeight: FontWeight.bold,
-                    color: activeColor),
+                  fontSize: 56,
+                  fontWeight: FontWeight.bold,
+                  color: activeColor,
+                  fontFeatures: [FontFeature.tabularFigures()],
+                ),
               ),
               Text('秒',
                   style: TextStyle(fontSize: 18, color: Colors.grey[600])),

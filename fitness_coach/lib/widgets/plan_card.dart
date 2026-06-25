@@ -20,10 +20,13 @@ class PlanCard extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(28),
+      ),
       child: InkWell(
         onTap: onTap,
         onLongPress: onLongPress,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(28),
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Row(
@@ -61,9 +64,16 @@ class PlanCard extends StatelessWidget {
               const SizedBox(width: 8),
               ReorderableDragStartListener(
                 index: index,
-                child: Icon(Icons.drag_handle, color: Colors.grey[400]),
+                child: SizedBox(
+                  width: 40,
+                  height: 40,
+                  child: Center(
+                    child: Icon(Icons.drag_handle,
+                        size: 24, color: Colors.grey[400]),
+                  ),
+                ),
               ),
-              Icon(Icons.chevron_right, color: Colors.grey[400]),
+              Icon(Icons.chevron_right, size: 24, color: Colors.grey[400]),
             ],
           ),
         ),
