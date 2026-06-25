@@ -1,0 +1,3626 @@
+软件名称：健身好搭子
+版本号：v1.2.3
+开发语言：Dart (Flutter)
+总行数：3671 行
+总页数：64 页（提交前30页 + 后30页，共 60 页）
+============================================================
+
+—— 第 1 页 / 共 60 页 ——
+
+// 文件: models/exercise.dart
+// -------------------------------------------------------
+
+class Exercise {
+  final int? id;
+  final String name;
+  final String category;      // '力量' 或 '计时'
+  final String muscleGroup;
+  final String iconCode;      // Flutter IconData codePoint
+  final String? description;
+  bool _isPreset;
+  final int sortOrder;
+  final String? createdAt;
+
+  Exercise({
+    this.id,
+    required this.name,
+    required this.category,
+    required this.muscleGroup,
+    required this.iconCode,
+    this.description,
+    bool isPreset = false,
+    this.sortOrder = 0,
+    this.createdAt,
+  }) : _isPreset = isPreset;
+
+  bool get isPreset => _isPreset;
+  set isPreset(bool value) => _isPreset = value;
+
+  factory Exercise.fromMap(Map<String, dynamic> map) {
+    return Exercise(
+      id: map['id'] as int?,
+      name: map['name'] as String,
+      category: map['category'] as String,
+      muscleGroup: map['muscle_group'] as String,
+      iconCode: map['icon_code'] as String,
+      description: map['description'] as String?,
+      isPreset: (map['is_preset'] as int?) == 1,
+      sortOrder: map['sort_order'] as int? ?? 0,
+      createdAt: map['created_at'] as String?,
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      if (id != null) 'id': id,
+      'name': name,
+      'category': category,
+      'muscle_group': muscleGroup,
+      'icon_code': iconCode,
+      'description': description,
+      'is_preset': _isPreset ? 1 : 0,
+      'sort_order': sortOrder,
+      'created_at': createdAt,
+    };
+  }
+
+  Exercise copyWith({
+
+—— 第 2 页 / 共 60 页 ——
+
+    int? id,
+    String? name,
+    String? category,
+    String? muscleGroup,
+    String? iconCode,
+    String? description,
+    bool? isPreset,
+    int? sortOrder,
+    String? createdAt,
+  }) {
+    return Exercise(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      category: category ?? this.category,
+      muscleGroup: muscleGroup ?? this.muscleGroup,
+      iconCode: iconCode ?? this.iconCode,
+      description: description ?? this.description,
+      isPreset: isPreset ?? _isPreset,
+      sortOrder: sortOrder ?? this.sortOrder,
+      createdAt: createdAt ?? this.createdAt,
+    );
+  }
+
+  @override
+  String toString() => name;
+}
+
+// 文件: models/plan_exercise.dart
+// -------------------------------------------------------
+
+class PlanExercise {
+  final int? id;
+  final int planId;
+  final int exerciseId;
+  final int sortOrder;
+  final int sets;
+  final int? reps;            // 力量训练有次数，计时训练为 null
+  final int workSeconds;      // 每组训练时长（秒）
+  final int restSeconds;      // 组间休息（秒）
+  final int afterRestSeconds; // 动作完成后一次性休息（秒）
+  final String? notes;
+
+  // 关联数据（非数据库字段，由 DAO 层 join 填充）
+  String? exerciseName;
+  String? exerciseCategory;
+  String? exerciseMuscleGroup;
+  String? exerciseIconCode;
+
+  PlanExercise({
+    this.id,
+    required this.planId,
+    required this.exerciseId,
+    required this.sortOrder,
+    required this.sets,
+    this.reps,
+    required this.workSeconds,
+    required this.restSeconds,
+    this.afterRestSeconds = 0,
+
+—— 第 3 页 / 共 60 页 ——
+
+    this.notes,
+    this.exerciseName,
+    this.exerciseCategory,
+    this.exerciseMuscleGroup,
+    this.exerciseIconCode,
+  });
+
+  factory PlanExercise.fromMap(Map<String, dynamic> map) {
+    return PlanExercise(
+      id: map['id'] as int?,
+      planId: map['plan_id'] as int,
+      exerciseId: map['exercise_id'] as int,
+      sortOrder: map['sort_order'] as int,
+      sets: map['sets'] as int,
+      reps: map['reps'] as int?,
+      workSeconds: map['work_seconds'] as int,
+      restSeconds: map['rest_seconds'] as int,
+      afterRestSeconds: (map['after_rest_seconds'] as int?) ?? 0,
+      notes: map['notes'] as String?,
+      exerciseName: map['exercise_name'] as String?,
+      exerciseCategory: map['exercise_category'] as String?,
+      exerciseMuscleGroup: map['exercise_muscle_group'] as String?,
+      exerciseIconCode: map['exercise_icon_code'] as String?,
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      if (id != null) 'id': id,
+      'plan_id': planId,
+      'exercise_id': exerciseId,
+      'sort_order': sortOrder,
+      'sets': sets,
+      'reps': reps,
+      'work_seconds': workSeconds,
+      'rest_seconds': restSeconds,
+      'after_rest_seconds': afterRestSeconds,
+      'notes': notes,
+    };
+  }
+
+  PlanExercise copyWith({
+    int? id,
+    int? planId,
+    int? exerciseId,
+    int? sortOrder,
+    int? sets,
+    int? reps,
+    int? workSeconds,
+    int? restSeconds,
+    int? afterRestSeconds,
+    String? notes,
+  }) {
+    return PlanExercise(
+      id: id ?? this.id,
+      planId: planId ?? this.planId,
+      exerciseId: exerciseId ?? this.exerciseId,
+      sortOrder: sortOrder ?? this.sortOrder,
+
+—— 第 4 页 / 共 60 页 ——
+
+      sets: sets ?? this.sets,
+      reps: reps ?? this.reps,
+      workSeconds: workSeconds ?? this.workSeconds,
+      restSeconds: restSeconds ?? this.restSeconds,
+      afterRestSeconds: afterRestSeconds ?? this.afterRestSeconds,
+      notes: notes ?? this.notes,
+      exerciseName: exerciseName,
+      exerciseCategory: exerciseCategory,
+      exerciseMuscleGroup: exerciseMuscleGroup,
+      exerciseIconCode: exerciseIconCode,
+    );
+  }
+
+  /// 该动作的总时长估算（秒）: 组数 × (训练时长 + 休息时间) + 完成后休息
+  int get estimatedDurationSeconds =>
+      sets * (workSeconds + restSeconds) + afterRestSeconds;
+}
+
+// 文件: models/training_plan.dart
+// -------------------------------------------------------
+
+import 'plan_exercise.dart';
+
+class TrainingPlan {
+  final int? id;
+  final String name;
+  final String? description;
+  final int sortOrder;
+  final String? createdAt;
+  String? updatedAt;
+  List<PlanExercise> exercises;
+
+  TrainingPlan({
+    this.id,
+    required this.name,
+    this.description,
+    this.sortOrder = 0,
+    this.createdAt,
+    this.updatedAt,
+    List<PlanExercise>? exercises,
+  }) : exercises = exercises ?? [];
+
+  factory TrainingPlan.fromMap(Map<String, dynamic> map) {
+    return TrainingPlan(
+      id: map['id'] as int?,
+      name: map['name'] as String,
+      description: map['description'] as String?,
+      sortOrder: map['sort_order'] as int? ?? 0,
+      createdAt: map['created_at'] as String?,
+      updatedAt: map['updated_at'] as String?,
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      if (id != null) 'id': id,
+      'name': name,
+      'description': description,
+
+—— 第 5 页 / 共 60 页 ——
+
+      'sort_order': sortOrder,
+      'created_at': createdAt,
+      'updated_at': updatedAt,
+    };
+  }
+
+  TrainingPlan copyWith({
+    int? id,
+    String? name,
+    String? description,
+    int? sortOrder,
+    String? createdAt,
+    String? updatedAt,
+    List<PlanExercise>? exercises,
+  }) {
+    return TrainingPlan(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      description: description ?? this.description,
+      sortOrder: sortOrder ?? this.sortOrder,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      exercises: exercises ?? List.from(this.exercises),
+    );
+  }
+
+  /// 计划总动作数
+  int get exerciseCount => exercises.length;
+
+  /// 计划预估总时长（秒）
+  int get estimatedDurationSeconds =>
+      exercises.fold(0, (sum, e) => sum + e.estimatedDurationSeconds);
+
+  /// 格式化预估时长：如 "约35分钟"
+  String get estimatedDurationText {
+    final minutes = estimatedDurationSeconds ~/ 60;
+    if (minutes < 1) return '不到1分钟';
+    return '约$minutes分钟';
+  }
+
+  @override
+  String toString() => name;
+}
+
+// 文件: models/workout_session.dart
+// -------------------------------------------------------
+
+import 'dart:convert';
+
+class CompletedExercise {
+  final String exerciseName;
+  final int plannedSets;
+  final int completedSets;
+
+  CompletedExercise({
+    required this.exerciseName,
+    required this.plannedSets,
+    required this.completedSets,
+
+—— 第 6 页 / 共 60 页 ——
+
+  });
+
+  Map<String, dynamic> toJson() => {
+        'exerciseName': exerciseName,
+        'plannedSets': plannedSets,
+        'completedSets': completedSets,
+      };
+
+  factory CompletedExercise.fromJson(Map<String, dynamic> json) {
+    return CompletedExercise(
+      exerciseName: json['exerciseName'] as String,
+      plannedSets: json['plannedSets'] as int,
+      completedSets: json['completedSets'] as int,
+    );
+  }
+}
+
+class WorkoutSession {
+  final int? id;
+  final int planId;
+  final String planName;
+  final String startedAt;
+  final String? finishedAt;
+  final int durationSec;
+  final List<CompletedExercise> completedExercises;
+
+  WorkoutSession({
+    this.id,
+    required this.planId,
+    required this.planName,
+    required this.startedAt,
+    this.finishedAt,
+    this.durationSec = 0,
+    List<CompletedExercise>? completedExercises,
+  }) : completedExercises = completedExercises ?? [];
+
+  factory WorkoutSession.fromMap(Map<String, dynamic> map) {
+    List<CompletedExercise> exercises = [];
+    if (map['exercises_json'] != null) {
+      final list = json.decode(map['exercises_json'] as String) as List;
+      exercises = list.map((e) => CompletedExercise.fromJson(e)).toList();
+    }
+    return WorkoutSession(
+      id: map['id'] as int?,
+      planId: map['plan_id'] as int,
+      planName: map['plan_name'] as String,
+      startedAt: map['started_at'] as String,
+      finishedAt: map['finished_at'] as String?,
+      durationSec: map['duration_sec'] as int? ?? 0,
+      completedExercises: exercises,
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      if (id != null) 'id': id,
+      'plan_id': planId,
+      'plan_name': planName,
+
+—— 第 7 页 / 共 60 页 ——
+
+      'started_at': startedAt,
+      'finished_at': finishedAt,
+      'duration_sec': durationSec,
+      'exercises_json':
+          json.encode(completedExercises.map((e) => e.toJson()).toList()),
+    };
+  }
+
+  /// 格式化时长：如 "32分15秒"
+  String get formattedDuration {
+    final minutes = durationSec ~/ 60;
+    final seconds = durationSec % 60;
+    if (minutes == 0) return '${seconds}秒';
+    return '${minutes}分${seconds}秒';
+  }
+
+  /// 格式化日期显示
+  String get formattedDate {
+    try {
+      final dt = DateTime.parse(startedAt);
+      return '${dt.month}月${dt.day}日 '
+          '${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
+    } catch (_) {
+      return startedAt;
+    }
+  }
+}
+
+// 文件: database/database_helper.dart
+// -------------------------------------------------------
+
+import 'package:sqflite/sqflite.dart';
+import 'package:path/path.dart';
+
+class DatabaseHelper {
+  static final Map<String, DatabaseHelper> _instances = {};
+  final String _dbName;
+  Database? _database;
+
+  factory DatabaseHelper({String dbName = 'fitness_coach.db'}) {
+    return _instances.putIfAbsent(
+        dbName, () => DatabaseHelper._internal(dbName));
+  }
+
+  DatabaseHelper._internal(this._dbName);
+
+  Future<Database> get database async {
+    if (_database != null) return _database!;
+    _database = await _initDatabase();
+    return _database!;
+  }
+
+  Future<Database> _initDatabase() async {
+    final dbPath = await getDatabasesPath();
+    final path = join(dbPath, _dbName);
+
+    return await openDatabase(
+      path,
+
+—— 第 8 页 / 共 60 页 ——
+
+      version: 4,
+      onCreate: _onCreate,
+      onUpgrade: _onUpgrade,
+    );
+  }
+
+  Future<void> _onCreate(Database db, int version) async {
+    await db.execute('''
+      CREATE TABLE exercises (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        category TEXT NOT NULL,
+        muscle_group TEXT NOT NULL,
+        icon_code TEXT NOT NULL,
+        description TEXT,
+        is_preset INTEGER NOT NULL DEFAULT 0,
+        sort_order INTEGER NOT NULL DEFAULT 0,
+        created_at TEXT NOT NULL
+      )
+    ''');
+
+    await db.execute('''
+      CREATE TABLE training_plans (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        description TEXT,
+        sort_order INTEGER NOT NULL DEFAULT 0,
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL
+      )
+    ''');
+
+    await db.execute('''
+      CREATE TABLE plan_exercises (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        plan_id INTEGER NOT NULL,
+        exercise_id INTEGER NOT NULL,
+        sort_order INTEGER NOT NULL DEFAULT 0,
+        sets INTEGER NOT NULL DEFAULT 3,
+        reps INTEGER,
+        work_seconds INTEGER NOT NULL DEFAULT 45,
+        rest_seconds INTEGER NOT NULL DEFAULT 60,
+        after_rest_seconds INTEGER NOT NULL DEFAULT 0,
+        notes TEXT,
+        FOREIGN KEY (plan_id) REFERENCES training_plans(id) ON DELETE CASCADE,
+        FOREIGN KEY (exercise_id) REFERENCES exercises(id) ON DELETE CASCADE
+      )
+    ''');
+
+    await db.execute('''
+      CREATE TABLE workout_sessions (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        plan_id INTEGER NOT NULL,
+        plan_name TEXT NOT NULL,
+        started_at TEXT NOT NULL,
+        finished_at TEXT,
+        duration_sec INTEGER NOT NULL DEFAULT 0,
+        exercises_json TEXT NOT NULL DEFAULT '[]'
+
+—— 第 9 页 / 共 60 页 ——
+
+      )
+    ''');
+  }
+
+  Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    if (oldVersion < 2) {
+      await db.execute(
+          'ALTER TABLE training_plans ADD COLUMN sort_order INTEGER NOT NULL DEFAULT 0');
+    }
+    if (oldVersion < 3) {
+      await db.execute(
+          'ALTER TABLE exercises ADD COLUMN sort_order INTEGER NOT NULL DEFAULT 0');
+    }
+    if (oldVersion < 4) {
+      await db.execute(
+          'ALTER TABLE plan_exercises ADD COLUMN after_rest_seconds INTEGER NOT NULL DEFAULT 0');
+    }
+  }
+
+  /// 仅用于测试：重置数据库
+  Future<void> resetDatabase() async {
+    final dbPath = await getDatabasesPath();
+    final path = join(dbPath, _dbName);
+    await deleteDatabase(path);
+    _database = null;
+    _instances.remove(_dbName);
+  }
+}
+
+// 文件: database/exercise_dao.dart
+// -------------------------------------------------------
+
+import 'package:fitness_coach/database/database_helper.dart';
+import 'package:fitness_coach/models/exercise.dart';
+
+class ExerciseDao {
+  final DatabaseHelper _dbHelper;
+
+  ExerciseDao({DatabaseHelper? dbHelper})
+      : _dbHelper = dbHelper ?? DatabaseHelper();
+
+  Future<int> insert(Exercise exercise) async {
+    final db = await _dbHelper.database;
+    return await db.insert('exercises', exercise.toMap());
+  }
+
+  Future<List<Exercise>> getAll() async {
+    final db = await _dbHelper.database;
+    final maps = await db.query('exercises', orderBy: 'sort_order, category, name');
+    return maps.map((m) => Exercise.fromMap(m)).toList();
+  }
+
+  Future<Exercise?> getById(int id) async {
+    final db = await _dbHelper.database;
+    final maps = await db.query('exercises', where: 'id = ?', whereArgs: [id]);
+    if (maps.isEmpty) return null;
+    return Exercise.fromMap(maps.first);
+  }
+
+—— 第 10 页 / 共 60 页 ——
+
+
+  Future<List<Exercise>> getByCategory(String category) async {
+    final db = await _dbHelper.database;
+    final maps = await db.query(
+      'exercises',
+      where: 'category = ?',
+      whereArgs: [category],
+      orderBy: 'name',
+    );
+    return maps.map((m) => Exercise.fromMap(m)).toList();
+  }
+
+  Future<List<Exercise>> getCustom() async {
+    final db = await _dbHelper.database;
+    final maps = await db.query(
+      'exercises',
+      where: 'is_preset = 0',
+      orderBy: 'created_at DESC',
+    );
+    return maps.map((m) => Exercise.fromMap(m)).toList();
+  }
+
+  Future<int> update(Exercise exercise) async {
+    final db = await _dbHelper.database;
+    return await db.update(
+      'exercises',
+      exercise.toMap(),
+      where: 'id = ?',
+      whereArgs: [exercise.id],
+    );
+  }
+
+  Future<int> delete(int id) async {
+    final db = await _dbHelper.database;
+    return await db.delete('exercises', where: 'id = ?', whereArgs: [id]);
+  }
+
+  /// 批量插入预置动作
+  Future<void> insertPresetExercises(List<Exercise> exercises) async {
+    final db = await _dbHelper.database;
+    final batch = db.batch();
+    for (final exercise in exercises) {
+      batch.insert('exercises', exercise.toMap());
+    }
+    await batch.commit(noResult: true);
+  }
+
+  /// 检查是否已有预置数据
+  Future<bool> hasPresetExercises() async {
+    final db = await _dbHelper.database;
+    final result = await db.rawQuery(
+        'SELECT COUNT(*) as cnt FROM exercises WHERE is_preset = 1');
+    return (result.first['cnt'] as int) > 0;
+  }
+
+  /// 增量同步预置动作：只插入数据库中不存在的（按名称去重）
+  Future<void> syncPresetExercises(List<Exercise> exercises) async {
+    final db = await _dbHelper.database;
+
+—— 第 11 页 / 共 60 页 ——
+
+    final existing =
+        await db.rawQuery('SELECT name FROM exercises WHERE is_preset = 1');
+    final existingNames = existing.map((e) => e['name'] as String).toSet();
+    final toInsert = exercises
+        .where((e) => !existingNames.contains(e.name))
+        .toList();
+    if (toInsert.isNotEmpty) {
+      final batch = db.batch();
+      for (final exercise in toInsert) {
+        batch.insert('exercises', exercise.toMap());
+      }
+      await batch.commit(noResult: true);
+    }
+  }
+}
+
+// 文件: database/plan_dao.dart
+// -------------------------------------------------------
+
+import 'package:fitness_coach/database/database_helper.dart';
+import 'package:fitness_coach/models/training_plan.dart';
+import 'package:fitness_coach/models/plan_exercise.dart';
+
+class PlanDao {
+  final DatabaseHelper _dbHelper;
+
+  PlanDao({DatabaseHelper? dbHelper})
+      : _dbHelper = dbHelper ?? DatabaseHelper();
+
+  // ─── TrainingPlan CRUD ───
+
+  Future<int> insertPlan(TrainingPlan plan) async {
+    final db = await _dbHelper.database;
+    return await db.insert('training_plans', plan.toMap());
+  }
+
+  Future<List<TrainingPlan>> getAllPlans() async {
+    final db = await _dbHelper.database;
+    final maps = await db.query('training_plans', orderBy: 'sort_order, updated_at DESC');
+    final plans = maps.map((m) => TrainingPlan.fromMap(m)).toList();
+    for (final plan in plans) {
+      plan.exercises = await _getPlanExercises(plan.id!);
+    }
+    return plans;
+  }
+
+  Future<TrainingPlan?> getPlanById(int id) async {
+    final db = await _dbHelper.database;
+    final maps =
+        await db.query('training_plans', where: 'id = ?', whereArgs: [id]);
+    if (maps.isEmpty) return null;
+    final plan = TrainingPlan.fromMap(maps.first);
+    plan.exercises = await _getPlanExercises(id);
+    return plan;
+  }
+
+  Future<int> updatePlan(TrainingPlan plan) async {
+    final db = await _dbHelper.database;
+
+—— 第 12 页 / 共 60 页 ——
+
+    return await db.update(
+      'training_plans',
+      plan.toMap(),
+      where: 'id = ?',
+      whereArgs: [plan.id],
+    );
+  }
+
+  Future<int> deletePlan(int id) async {
+    final db = await _dbHelper.database;
+    await db.delete('plan_exercises', where: 'plan_id = ?', whereArgs: [id]);
+    return await db.delete('training_plans', where: 'id = ?', whereArgs: [id]);
+  }
+
+  // ─── PlanExercise CRUD ───
+
+  Future<int> insertPlanExercise(PlanExercise pe) async {
+    final db = await _dbHelper.database;
+    return await db.insert('plan_exercises', pe.toMap());
+  }
+
+  Future<void> updatePlanExercise(PlanExercise pe) async {
+    final db = await _dbHelper.database;
+    await db.update('plan_exercises', pe.toMap(),
+        where: 'id = ?', whereArgs: [pe.id]);
+  }
+
+  Future<void> deletePlanExercise(int id) async {
+    final db = await _dbHelper.database;
+    await db.delete('plan_exercises', where: 'id = ?', whereArgs: [id]);
+  }
+
+  /// 替换某个计划下的全部动作（批量删除 + 批量插入）
+  Future<void> replacePlanExercises(
+      int planId, List<PlanExercise> exercises) async {
+    final db = await _dbHelper.database;
+    await db.transaction((txn) async {
+      await txn
+          .delete('plan_exercises', where: 'plan_id = ?', whereArgs: [planId]);
+      for (int i = 0; i < exercises.length; i++) {
+        final pe = exercises[i].copyWith(sortOrder: i);
+        await txn.insert('plan_exercises', pe.toMap());
+      }
+    });
+  }
+
+  // ─── 内部方法 ───
+
+  Future<List<PlanExercise>> _getPlanExercises(int planId) async {
+    final db = await _dbHelper.database;
+    final maps = await db.rawQuery('''
+      SELECT pe.*, e.name as exercise_name, e.category as exercise_category,
+             e.muscle_group as exercise_muscle_group, e.icon_code as exercise_icon_code
+      FROM plan_exercises pe
+      JOIN exercises e ON pe.exercise_id = e.id
+      WHERE pe.plan_id = ?
+      ORDER BY pe.sort_order
+    ''', [planId]);
+
+—— 第 13 页 / 共 60 页 ——
+
+    return maps.map((m) => PlanExercise.fromMap(m)).toList();
+  }
+}
+
+// 文件: database/session_dao.dart
+// -------------------------------------------------------
+
+import 'package:fitness_coach/database/database_helper.dart';
+import 'package:fitness_coach/models/workout_session.dart';
+
+class SessionDao {
+  final DatabaseHelper _dbHelper;
+
+  SessionDao({DatabaseHelper? dbHelper})
+      : _dbHelper = dbHelper ?? DatabaseHelper();
+
+  Future<int> insert(WorkoutSession session) async {
+    final db = await _dbHelper.database;
+    return await db.insert('workout_sessions', session.toMap());
+  }
+
+  Future<List<WorkoutSession>> getAll() async {
+    final db = await _dbHelper.database;
+    final maps =
+        await db.query('workout_sessions', orderBy: 'started_at DESC');
+    return maps.map((m) => WorkoutSession.fromMap(m)).toList();
+  }
+
+  Future<WorkoutSession?> getById(int id) async {
+    final db = await _dbHelper.database;
+    final maps = await db
+        .query('workout_sessions', where: 'id = ?', whereArgs: [id]);
+    if (maps.isEmpty) return null;
+    return WorkoutSession.fromMap(maps.first);
+  }
+
+  Future<int> delete(int id) async {
+    final db = await _dbHelper.database;
+    return await db
+        .delete('workout_sessions', where: 'id = ?', whereArgs: [id]);
+  }
+
+  /// 获取最近 N 次训练
+  Future<List<WorkoutSession>> getRecent(int limit) async {
+    final db = await _dbHelper.database;
+    final maps = await db.query(
+      'workout_sessions',
+      orderBy: 'started_at DESC',
+      limit: limit,
+    );
+    return maps.map((m) => WorkoutSession.fromMap(m)).toList();
+  }
+}
+
+// 文件: services/background_service_manager.dart
+// -------------------------------------------------------
+
+import 'dart:io';
+
+—— 第 14 页 / 共 60 页 ——
+
+import 'package:flutter/services.dart';
+
+/// 平台后台保活管理器。
+/// iOS: 静默音频保持 AVAudioSession 活跃。
+/// Android: 前台 Service 保持进程存活。
+class BackgroundServiceManager {
+  static const _iosChannel = MethodChannel('com.fitutor/audio_bridge');
+  static const _androidChannel = MethodChannel('com.fitutor/foreground_service');
+
+  /// 开始训练时调用，启动平台后台保活。
+  Future<void> startWorkout() async {
+    if (Platform.isIOS) {
+      try {
+        await _iosChannel.invokeMethod('startSilentAudio');
+      } catch (_) {
+        // 静默音频失败不阻塞训练流程
+      }
+    } else if (Platform.isAndroid) {
+      try {
+        await _androidChannel.invokeMethod('startService');
+      } catch (_) {
+        // 前台 Service 失败不阻塞训练流程
+      }
+    }
+  }
+
+  /// 停止训练时调用，停止平台后台保活。
+  Future<void> stopWorkout() async {
+    if (Platform.isIOS) {
+      try {
+        await _iosChannel.invokeMethod('stopSilentAudio');
+      } catch (_) {}
+    } else if (Platform.isAndroid) {
+      try {
+        await _androidChannel.invokeMethod('stopService');
+      } catch (_) {}
+    }
+  }
+
+  /// 播放短促提示音。
+  Future<void> playBeep() async {
+    if (Platform.isAndroid) {
+      try {
+        await _androidChannel.invokeMethod('playBeep');
+      } catch (_) {}
+    } else if (Platform.isIOS) {
+      try {
+        await _iosChannel.invokeMethod('playBeep');
+      } catch (_) {}
+    }
+  }
+}
+
+// 文件: services/coach_engine.dart
+// -------------------------------------------------------
+
+import 'dart:async';
+import 'package:fitness_coach/models/training_plan.dart';
+
+—— 第 15 页 / 共 60 页 ——
+
+import 'package:fitness_coach/models/plan_exercise.dart';
+import 'package:fitness_coach/services/tts_service.dart';
+import 'package:fitness_coach/services/haptic_service.dart';
+import 'package:fitness_coach/utils/beep.dart';
+
+enum CoachPhase {
+  idle,
+  announcing,
+  working,
+  paused,
+  resting,              // 组间休息
+  postExerciseResting,   // 动作完成后休息
+  transitioning,
+  completed,
+}
+
+class CoachState {
+  final CoachPhase phase;
+  final int currentExerciseIndex;
+  final int currentSetIndex;
+  final int totalExercises;
+  final int totalSetsForCurrentExercise;
+  final int remainingSeconds;
+  final PlanExercise? currentExercise;
+  final List<PlanExercise> exercises;
+  final DateTime? startedAt;
+
+  const CoachState({
+    this.phase = CoachPhase.idle,
+    this.currentExerciseIndex = 0,
+    this.currentSetIndex = 0,
+    this.totalExercises = 0,
+    this.totalSetsForCurrentExercise = 0,
+    this.remainingSeconds = 0,
+    this.currentExercise,
+    this.exercises = const [],
+    this.startedAt,
+  });
+
+  CoachState copyWith({
+    CoachPhase? phase,
+    int? currentExerciseIndex,
+    int? currentSetIndex,
+    int? totalExercises,
+    int? totalSetsForCurrentExercise,
+    int? remainingSeconds,
+    PlanExercise? currentExercise,
+    List<PlanExercise>? exercises,
+    DateTime? startedAt,
+  }) {
+    return CoachState(
+      phase: phase ?? this.phase,
+      currentExerciseIndex: currentExerciseIndex ?? this.currentExerciseIndex,
+      currentSetIndex: currentSetIndex ?? this.currentSetIndex,
+      totalExercises: totalExercises ?? this.totalExercises,
+      totalSetsForCurrentExercise:
+          totalSetsForCurrentExercise ?? this.totalSetsForCurrentExercise,
+      remainingSeconds: remainingSeconds ?? this.remainingSeconds,
+
+—— 第 16 页 / 共 60 页 ——
+
+      currentExercise: currentExercise ?? this.currentExercise,
+      exercises: exercises ?? this.exercises,
+      startedAt: startedAt ?? this.startedAt,
+    );
+  }
+
+  /// 整体进度 0.0 - 1.0
+  double get overallProgress {
+    if (totalExercises == 0) return 0;
+    final exerciseProgress = currentExerciseIndex / totalExercises;
+    final totalSets = currentExercise?.sets ?? 1;
+    if (totalSets == 0) return exerciseProgress;
+    final setProgress =
+        (currentSetIndex / totalSets) / totalExercises;
+    return exerciseProgress + setProgress;
+  }
+}
+
+class CoachEngine {
+  final TtsService _tts;
+  final HapticService _haptic;
+
+  final StreamController<CoachState> _stateController =
+      StreamController<CoachState>.broadcast();
+
+  Stream<CoachState> get stateStream => _stateController.stream;
+
+  CoachState _state = const CoachState();
+  CoachState get currentState => _state;
+
+  Timer? _timer;
+  DateTime? _timerBase;
+  Future<void> Function()? _timerOnDone;
+  CoachPhase _phaseBeforePause = CoachPhase.working;
+  int _frozenRemaining = 0;
+
+  /// 中途提醒间隔秒数，0 = 关闭
+  int reminderIntervalSeconds = 0;
+
+  CoachEngine({required TtsService tts, required HapticService haptic})
+      : _tts = tts,
+        _haptic = haptic;
+
+  void loadPlan(TrainingPlan plan) {
+    _emit(_state.copyWith(
+      phase: CoachPhase.idle,
+      exercises: List.from(plan.exercises),
+      totalExercises: plan.exerciseCount,
+      currentExerciseIndex: 0,
+      currentSetIndex: 0,
+      currentExercise: plan.exercises.isNotEmpty ? plan.exercises.first : null,
+      remainingSeconds: 0,
+    ));
+  }
+
+  void start() {
+    if (_state.exercises.isEmpty) return;
+    _enterAnnouncing();
+
+—— 第 17 页 / 共 60 页 ——
+
+  }
+
+  void pause() {
+    if (_state.phase != CoachPhase.working &&
+        _state.phase != CoachPhase.resting &&
+        _state.phase != CoachPhase.postExerciseResting) return;
+    _timer?.cancel();
+    _phaseBeforePause = _state.phase;
+    _frozenRemaining = _state.remainingSeconds;
+    _emitState(CoachPhase.paused);
+    _tts.speak('暂停中');
+  }
+
+  void resume() {
+    if (_state.phase != CoachPhase.paused) return;
+    final remaining = _frozenRemaining;
+    final phase = _phaseBeforePause;
+    _tts.speak('继续');
+    _emitState(phase, remaining: remaining);
+    _startTimer(remaining, _onTimerComplete);
+  }
+
+  void skipRest() {
+    if (_state.phase != CoachPhase.resting &&
+        _state.phase != CoachPhase.postExerciseResting) return;
+    _timer?.cancel();
+    _timerOnDone?.call();
+  }
+
+  void stop() {
+    _timer?.cancel();
+    _tts.speak('训练结束');
+    _emit(const CoachState(phase: CoachPhase.idle));
+  }
+
+  void dispose() {
+    _timer?.cancel();
+    _stateController.close();
+  }
+
+  // ─── 状态转换 ───
+
+  void _emitState(CoachPhase phase, {int remaining = 0}) {
+    _emit(_state.copyWith(phase: phase, remainingSeconds: remaining));
+  }
+
+  void _emit(CoachState newState) {
+    _state = newState;
+    _stateController.add(_state);
+  }
+
+  void _startTimer(int seconds, Future<void> Function() onDone) {
+    _timerOnDone = onDone;
+    _timerBase = DateTime.now();
+    _emit(_state.copyWith(phase: _state.phase, remainingSeconds: seconds));
+
+    // 中途提醒间隔
+    final interval = reminderIntervalSeconds;
+
+—— 第 18 页 / 共 60 页 ——
+
+    int lastAnnouncedRemaining = seconds; // 避免刚开始就播报
+
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      final elapsed = DateTime.now().difference(_timerBase!).inSeconds;
+      final remaining = seconds - elapsed;
+
+      if (remaining <= 0) {
+        timer.cancel();
+        onDone();
+        return;
+      }
+
+      _emit(_state.copyWith(
+          phase: _state.phase, remainingSeconds: remaining));
+
+      // 中途间隔提醒：每隔 interval 秒播报剩余时间
+      if (interval > 0 && remaining > 5 && remaining < lastAnnouncedRemaining) {
+        if (remaining % interval == 0) {
+          lastAnnouncedRemaining = remaining;
+          final prefix =
+              (_state.phase == CoachPhase.resting || _state.phase == CoachPhase.postExerciseResting) ? '休息' : '';
+          _tts.speak('${prefix}还剩余$remaining秒');
+        }
+      }
+
+      // 最后5秒：震动 + 倒数
+      if (remaining <= 5) {
+        _haptic.countdownBuzz(remaining);
+        _tts.stop();
+        _tts.speak('$remaining');
+      }
+    });
+  }
+
+  Future<void> _beginWorking() async {
+    final exercise = _state.currentExercise!;
+    final workTime = exercise.workSeconds;
+    // 先出倒计时界面，再播语音
+    _emit(_state.copyWith(
+      phase: CoachPhase.working,
+      currentExercise: exercise,
+      currentSetIndex: _state.currentSetIndex,
+      totalSetsForCurrentExercise: exercise.sets,
+      remainingSeconds: workTime,
+    ));
+    await _tts.speak(_announcementText(exercise));
+    // 播报期间可能被 stop() 打断
+    if (_state.phase != CoachPhase.working) return;
+    await _tts.speak('第${_state.currentSetIndex + 1}组');
+    // 播报期间可能被 stop() 打断
+    if (_state.phase != CoachPhase.working) return;
+    await _tts.speak('开始');
+    await Future.delayed(const Duration(seconds: 1));
+    playBeep();
+    _startTimer(workTime, _onWorkComplete);
+  }
+
+  // _enterAnnouncing 合并到 _beginWorking，先出界面再播语音
+
+—— 第 19 页 / 共 60 页 ——
+
+  Future<void> _enterAnnouncing() => _beginWorking();
+
+  Future<void> _onWorkComplete() async {
+    final exercise = _state.currentExercise!;
+    final newSetIndex = _state.currentSetIndex + 1;
+  
+    if (newSetIndex >= exercise.sets) {
+      final afterRest = exercise.afterRestSeconds;
+      if (afterRest > 0) {
+        _timerOnDone = _onPostExerciseRestComplete;
+        _emitState(CoachPhase.postExerciseResting, remaining: afterRest);
+        // 播报下一动作信息
+        final nextIdx = _state.currentExerciseIndex + 1;
+        final nextExercise = nextIdx < _state.totalExercises
+            ? _state.exercises[nextIdx]
+            : null;
+        if (nextExercise != null) {
+          await _tts.speak(
+              '${exercise.exerciseName ?? '动作'}完成，休息${afterRest}秒。下一动作：${_announcementText(nextExercise)}');
+        } else {
+          await _tts.speak(
+              '${exercise.exerciseName ?? '动作'}完成，休息${afterRest}秒');
+        }
+        // 播报期间可能被 skip 打断
+        if (_state.phase != CoachPhase.postExerciseResting) return;
+        await Future.delayed(const Duration(seconds: 1));
+        if (_state.phase != CoachPhase.postExerciseResting) return;
+        playBeep();
+        _startTimer(afterRest, _onPostExerciseRestComplete);
+      } else {
+        await _tts.speak('${exercise.exerciseName ?? '动作'}完成');
+        _enterTransitioning();
+      }
+    } else {
+      _emit(_state.copyWith(currentSetIndex: newSetIndex));
+      _timerOnDone = _onRestComplete;
+      _emitState(CoachPhase.resting, remaining: exercise.restSeconds);
+      await _tts.speak('${exercise.exerciseName ?? '动作'}第${newSetIndex}组完成, 休息${exercise.restSeconds}秒');
+      // 播报期间可能被 skip 打断
+      if (_state.phase != CoachPhase.resting) return;
+      await Future.delayed(const Duration(seconds: 1));
+      if (_state.phase != CoachPhase.resting) return;
+      playBeep();
+      _startTimer(exercise.restSeconds, _onRestComplete);
+    }
+  }
+
+  Future<void> _onRestComplete() async {
+    final exercise = _state.currentExercise!;
+    _emitState(CoachPhase.working, remaining: exercise.workSeconds);
+    final setName =
+        '${exercise.exerciseName ?? '动作'}，第${_state.currentSetIndex + 1}组';
+    await _tts.speak(setName);
+    await _tts.speak('开始');
+    await Future.delayed(const Duration(seconds: 1));
+    playBeep();
+    _startTimer(exercise.workSeconds, _onWorkComplete);
+  }
+
+—— 第 20 页 / 共 60 页 ——
+
+
+  Future<void> _onPostExerciseRestComplete() async {
+    _enterTransitioning();
+  }
+
+  void _enterTransitioning() {
+    final newExIndex = _state.currentExerciseIndex + 1;
+    if (newExIndex >= _state.totalExercises) {
+      _emitState(CoachPhase.completed);
+      _haptic.heavy();
+      _tts.speak('太棒了，训练完成！');
+      return;
+    }
+
+    final nextExercise = _state.exercises[newExIndex];
+    _emit(_state.copyWith(
+      phase: CoachPhase.transitioning,
+      currentExerciseIndex: newExIndex,
+      currentSetIndex: 0,
+      currentExercise: nextExercise,
+      remainingSeconds: 2,
+    ));
+    _tts.speak('下一动作：${nextExercise.exerciseName ?? ''}');
+
+    Future.delayed(const Duration(seconds: 2), () {
+      if (_state.phase == CoachPhase.transitioning) {
+        _enterAnnouncing();
+      }
+    });
+  }
+
+  Future<void> _onTimerComplete() async {
+    switch (_state.phase) {
+      case CoachPhase.announcing:
+        await _beginWorking();
+        break;
+      case CoachPhase.working:
+        await _onWorkComplete();
+        break;
+      case CoachPhase.resting:
+        await _onRestComplete();
+        break;
+      case CoachPhase.postExerciseResting:
+        await _onPostExerciseRestComplete();
+        break;
+      default:
+        break;
+    }
+  }
+
+  String _announcementText(PlanExercise exercise) {
+    final name = exercise.exerciseName ?? '动作';
+    final sets = exercise.sets;
+    final workSec = exercise.workSeconds;
+    if (exercise.reps != null) {
+      return '$name，$sets组，每组${exercise.reps}次，训练${workSec}秒';
+    }
+    return '$name，$sets组，每组${workSec}秒';
+
+—— 第 21 页 / 共 60 页 ——
+
+  }
+}
+
+// 文件: services/haptic_service.dart
+// -------------------------------------------------------
+
+import 'package:flutter/services.dart';
+
+class HapticService {
+  bool _enabled = true;
+
+  bool get enabled => _enabled;
+  set enabled(bool value) => _enabled = value;
+
+  void light() {
+    if (!_enabled) return;
+    HapticFeedback.lightImpact();
+  }
+
+  void medium() {
+    if (!_enabled) return;
+    HapticFeedback.mediumImpact();
+  }
+
+  void heavy() {
+    if (!_enabled) return;
+    HapticFeedback.heavyImpact();
+  }
+
+  /// 倒计时最后5秒每秒震动：5,4→light, 3→medium, 2→medium, 1→heavy
+  void countdownBuzz(int remainingSeconds) {
+    if (!_enabled) return;
+    switch (remainingSeconds) {
+      case 5:
+      case 4:
+        light();
+        break;
+      case 3:
+      case 2:
+        medium();
+        break;
+      case 1:
+        heavy();
+        break;
+    }
+  }
+}
+
+// 文件: services/notification_service.dart
+// -------------------------------------------------------
+
+import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:timezone/timezone.dart' as tz;
+import 'package:timezone/data/latest.dart' as tz_data;
+
+class NotificationService {
+  final FlutterLocalNotificationsPlugin _plugin =
+
+—— 第 22 页 / 共 60 页 ——
+
+      FlutterLocalNotificationsPlugin();
+  bool _reminderEnabled = false;
+  TimeOfDay _reminderTime = const TimeOfDay(hour: 18, minute: 0);
+
+  bool get reminderEnabled => _reminderEnabled;
+  TimeOfDay get reminderTime => _reminderTime;
+
+  Future<void> init() async {
+    tz_data.initializeTimeZones();
+
+    const androidSettings =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
+    const darwinSettings = DarwinInitializationSettings(
+      requestSoundPermission: true,
+      requestBadgePermission: true,
+      requestAlertPermission: true,
+    );
+    const settings = InitializationSettings(
+      android: androidSettings,
+      iOS: darwinSettings,
+      macOS: darwinSettings,
+    );
+    await _plugin.initialize(settings: settings);
+  }
+
+  Future<void> scheduleDailyReminder(TimeOfDay time) async {
+    _reminderEnabled = true;
+    _reminderTime = time;
+
+    await _plugin.cancelAll();
+
+    final now = DateTime.now();
+    var scheduledDate = DateTime(
+        now.year, now.month, now.day, time.hour, time.minute);
+    if (scheduledDate.isBefore(now)) {
+      scheduledDate = scheduledDate.add(const Duration(days: 1));
+    }
+
+    await _plugin.zonedSchedule(
+      id: 0,
+      title: '训练提醒',
+      body: '该去健身房了！今天坚持训练，你会更强大 💪',
+      scheduledDate: tz.TZDateTime.from(scheduledDate, tz.local),
+      notificationDetails: const NotificationDetails(
+        android: AndroidNotificationDetails(
+          'fitness_reminder',
+          '训练提醒',
+          channelDescription: '每日训练提醒',
+          importance: Importance.high,
+          priority: Priority.high,
+        ),
+        iOS: DarwinNotificationDetails(),
+        macOS: DarwinNotificationDetails(),
+      ),
+      androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+      matchDateTimeComponents: DateTimeComponents.time,
+    );
+  }
+
+—— 第 23 页 / 共 60 页 ——
+
+
+  Future<void> cancelReminder() async {
+    _reminderEnabled = false;
+    await _plugin.cancelAll();
+  }
+}
+
+// 文件: services/tts_service.dart
+// -------------------------------------------------------
+
+import 'package:flutter_tts/flutter_tts.dart';
+
+class TtsService {
+  final FlutterTts _flutterTts = FlutterTts();
+  bool _isMuted = false;
+  bool _initialized = false;
+  bool _available = true;
+
+  bool get isMuted => _isMuted;
+  bool get isAvailable => _available;
+
+  Future<void> init() async {
+    if (_initialized) return;
+    try {
+      await _flutterTts.setLanguage('zh-CN');
+      await _flutterTts.setSpeechRate(0.5);
+      await _flutterTts.setVolume(1.0);
+      await _flutterTts.setPitch(1.0);
+      await _flutterTts.awaitSpeakCompletion(true);
+      _initialized = true;
+      _available = true;
+    } catch (e) {
+      _available = false;
+    }
+  }
+
+  /// 播放欢迎词并预热引擎，应在首帧渲染后调用。fire-and-forget，不阻塞 UI。
+  void warmUp() {
+    if (!_initialized || !_available) return;
+    _flutterTts.speak('来，一起锻炼吧').catchError((_) {});
+  }
+
+  Future<void> speak(String text) async {
+    if (_isMuted || !_available) return;
+    try {
+      // 短暂延迟让音频管线稳定，避免开头杂音
+      await Future.delayed(const Duration(milliseconds: 80));
+      await _flutterTts.speak(text);
+    } catch (_) {
+      _available = false;
+    }
+  }
+
+  Future<void> stop() async {
+    try {
+      await _flutterTts.stop();
+      // 停止后等待音频管线释放，避免下次 speak 开头杂音
+      await Future.delayed(const Duration(milliseconds: 50));
+
+—— 第 24 页 / 共 60 页 ——
+
+    } catch (_) {}
+  }
+
+  void mute() => _isMuted = true;
+  void unmute() => _isMuted = false;
+  void toggleMute() => _isMuted = !_isMuted;
+
+  void dispose() {
+    _flutterTts.stop();
+  }
+}
+
+// 文件: providers/plan_provider.dart
+// -------------------------------------------------------
+
+import 'package:flutter/material.dart';
+import 'package:fitness_coach/database/plan_dao.dart';
+import 'package:fitness_coach/models/training_plan.dart';
+import 'package:fitness_coach/models/plan_exercise.dart';
+
+class PlanProvider extends ChangeNotifier {
+  final PlanDao _planDao = PlanDao();
+  List<TrainingPlan> _plans = [];
+  bool _loading = false;
+
+  List<TrainingPlan> get plans => _plans;
+  bool get loading => _loading;
+
+  Future<void> loadPlans() async {
+    _loading = true;
+    notifyListeners();
+    _plans = await _planDao.getAllPlans();
+    _loading = false;
+    notifyListeners();
+  }
+
+  Future<TrainingPlan?> getPlan(int id) async {
+    return await _planDao.getPlanById(id);
+  }
+
+  Future<int> createPlan(TrainingPlan plan) async {
+    final now = DateTime.now().toIso8601String();
+    final planToSave = plan.copyWith(createdAt: now, updatedAt: now);
+    final id = await _planDao.insertPlan(planToSave);
+    await loadPlans();
+    return id;
+  }
+
+  Future<void> updatePlan(TrainingPlan plan) async {
+    plan.updatedAt = DateTime.now().toIso8601String();
+    await _planDao.updatePlan(plan);
+    await loadPlans();
+  }
+
+  Future<void> deletePlan(int id) async {
+    await _planDao.deletePlan(id);
+    await loadPlans();
+  }
+
+—— 第 25 页 / 共 60 页 ——
+
+
+  Future<void> savePlanExercises(
+      int planId, List<PlanExercise> exercises) async {
+    await _planDao.replacePlanExercises(planId, exercises);
+    final plan = await _planDao.getPlanById(planId);
+    if (plan != null) {
+      plan.updatedAt = DateTime.now().toIso8601String();
+      await _planDao.updatePlan(plan);
+    }
+    await loadPlans();
+  }
+
+  Future<void> reorderPlans(int oldIndex, int newIndex) async {
+    if (oldIndex == newIndex) return;
+    final plan = _plans.removeAt(oldIndex);
+    _plans.insert(newIndex, plan);
+    // 立即通知 UI 刷新，避免 ReorderableListView 动画完成后拿到旧数据
+    notifyListeners();
+    // 异步写回 sort_order
+    for (int i = 0; i < _plans.length; i++) {
+      if (_plans[i].sortOrder != i) {
+        _plans[i] = _plans[i].copyWith(sortOrder: i);
+        _plans[i].updatedAt = DateTime.now().toIso8601String();
+        await _planDao.updatePlan(_plans[i]);
+      }
+    }
+  }
+}
+
+// 文件: providers/settings_provider.dart
+// -------------------------------------------------------
+
+import 'package:flutter/material.dart';
+import 'package:fitness_coach/services/tts_service.dart';
+import 'package:fitness_coach/services/haptic_service.dart';
+import 'package:fitness_coach/services/notification_service.dart';
+
+class SettingsProvider extends ChangeNotifier {
+  final TtsService _tts;
+  final HapticService _haptic;
+  final NotificationService _notification;
+  int _reminderInterval = 10; // 默认10秒
+  bool _tapToPause = false;
+
+  SettingsProvider({
+    required TtsService tts,
+    required HapticService haptic,
+    required NotificationService notification,
+  })  : _tts = tts,
+        _haptic = haptic,
+        _notification = notification;
+
+  bool get ttsEnabled => !_tts.isMuted;
+  bool get hapticEnabled => _haptic.enabled;
+  bool get reminderEnabled => _notification.reminderEnabled;
+  TimeOfDay get reminderTime => _notification.reminderTime;
+  int get reminderInterval => _reminderInterval;
+  bool get tapToPause => _tapToPause;
+
+—— 第 26 页 / 共 60 页 ——
+
+  String get reminderIntervalLabel =>
+      _reminderInterval == 0 ? '关闭' : '${_reminderInterval}秒';
+
+  void toggleTts() {
+    _tts.toggleMute();
+    notifyListeners();
+  }
+
+  void toggleHaptic() {
+    _haptic.enabled = !_haptic.enabled;
+    notifyListeners();
+  }
+
+  Future<void> toggleReminder(bool enabled) async {
+    if (enabled) {
+      await _notification.scheduleDailyReminder(_notification.reminderTime);
+    } else {
+      await _notification.cancelReminder();
+    }
+    notifyListeners();
+  }
+
+  Future<void> setReminderTime(TimeOfDay time) async {
+    await _notification.scheduleDailyReminder(time);
+    notifyListeners();
+  }
+
+  void setReminderInterval(int seconds) {
+    _reminderInterval = seconds;
+    notifyListeners();
+  }
+
+  void toggleTapToPause() {
+    _tapToPause = !_tapToPause;
+    notifyListeners();
+  }
+}
+
+// 文件: providers/workout_provider.dart
+// -------------------------------------------------------
+
+import 'dart:async';
+import 'package:flutter/material.dart';
+import 'package:fitness_coach/services/coach_engine.dart';
+import 'package:fitness_coach/services/tts_service.dart';
+import 'package:fitness_coach/services/haptic_service.dart';
+import 'package:fitness_coach/services/background_service_manager.dart';
+import 'package:fitness_coach/models/training_plan.dart';
+import 'package:fitness_coach/database/session_dao.dart';
+import 'package:fitness_coach/models/workout_session.dart';
+
+class WorkoutProvider extends ChangeNotifier with WidgetsBindingObserver {
+  late final CoachEngine _engine;
+  final SessionDao _sessionDao = SessionDao();
+  final BackgroundServiceManager _bgService = BackgroundServiceManager();
+  CoachState _coachState = const CoachState();
+  StreamSubscription<CoachState>? _sub;
+  DateTime? _workoutStartedAt;
+
+—— 第 27 页 / 共 60 页 ——
+
+  String? _planName;
+  bool _wasBackgrounded = false;
+
+  WorkoutProvider({required TtsService tts, required HapticService haptic}) {
+    _engine = CoachEngine(tts: tts, haptic: haptic);
+    _sub = _engine.stateStream.listen((state) {
+      _coachState = state;
+      if (state.phase == CoachPhase.completed) {
+        _saveSession(completed: true);
+      }
+      notifyListeners();
+    });
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused) {
+      _wasBackgrounded = true;
+    } else if (state == AppLifecycleState.resumed && _wasBackgrounded) {
+      _wasBackgrounded = false;
+      // 从后台恢复时刷新 UI，wall-clock delta 自动修正倒计时
+      notifyListeners();
+    }
+  }
+
+  CoachState get coachState => _coachState;
+
+  /// 完成的训练次数，每次保存后递增，供 HistoryPage 判断是否需要刷新
+  int _completedSessionCount = 0;
+  int get completedSessionCount => _completedSessionCount;
+
+  void loadPlan(TrainingPlan plan, {int intervalSeconds = 0}) {
+    _planName = plan.name;
+    _engine.reminderIntervalSeconds = intervalSeconds;
+    _engine.loadPlan(plan);
+    notifyListeners();
+  }
+
+  void startWorkout() {
+    _workoutStartedAt = DateTime.now();
+    _bgService.startWorkout();
+    _engine.start();
+  }
+
+  void pause() => _engine.pause();
+  void resume() => _engine.resume();
+  void skipRest() => _engine.skipRest();
+
+  void stopWorkout() {
+    _saveSession(completed: false);
+    _engine.stop();
+    _bgService.stopWorkout();
+  }
+
+  Future<void> _saveSession({bool completed = true}) async {
+    if (_workoutStartedAt == null) return;
+    final now = DateTime.now();
+
+—— 第 28 页 / 共 60 页 ——
+
+    final duration = now.difference(_workoutStartedAt!).inSeconds;
+
+    final currentIdx = _coachState.currentExerciseIndex;
+    final currentSet = _coachState.currentSetIndex;
+    final exercises = _coachState.exercises.asMap().entries.map((entry) {
+      final i = entry.key;
+      final e = entry.value;
+      int done;
+      if (i < currentIdx) {
+        done = e.sets; // 前面已完成
+      } else if (i == currentIdx) {
+        done = currentSet; // 当前动作完成了 N 组
+      } else {
+        done = 0; // 还没开始
+      }
+      return CompletedExercise(
+        exerciseName: e.exerciseName ?? '未知动作',
+        plannedSets: e.sets,
+        completedSets: completed ? e.sets : done,
+      );
+    }).toList();
+
+    final session = WorkoutSession(
+      planId: 0,
+      planName: _planName ?? '',
+      startedAt: _workoutStartedAt!.toIso8601String(),
+      finishedAt: completed ? now.toIso8601String() : null,
+      durationSec: duration,
+      completedExercises: exercises,
+    );
+
+    await _sessionDao.insert(session);
+    _completedSessionCount++;
+    notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _sub?.cancel();
+    _engine.dispose();
+    super.dispose();
+  }
+}
+
+// 文件: pages/exercise_manage_page.dart
+// -------------------------------------------------------
+
+import 'package:flutter/material.dart';
+import 'package:fitness_coach/database/exercise_dao.dart';
+import 'package:fitness_coach/models/exercise.dart';
+
+class ExerciseManagePage extends StatefulWidget {
+  const ExerciseManagePage({super.key});
+
+  @override
+  State<ExerciseManagePage> createState() => _ExerciseManagePageState();
+}
+
+—— 第 29 页 / 共 60 页 ——
+
+
+class _ExerciseManagePageState extends State<ExerciseManagePage> {
+  final ExerciseDao _dao = ExerciseDao();
+  final TextEditingController _searchController = TextEditingController();
+  List<Exercise> _exercises = [];
+  List<Exercise> _filtered = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _load();
+  }
+
+  Future<void> _load() async {
+    _exercises = await _dao.getAll();
+    _filtered = _exercises;
+    setState(() {});
+  }
+
+  void _filter(String query) {
+    setState(() {
+      _filtered = query.isEmpty
+          ? _exercises
+          : _exercises.where((e) => e.name.contains(query)).toList();
+    });
+  }
+
+  Future<void> _delete(Exercise exercise) async {
+    if (exercise.isPreset) return;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('删除动作'),
+        content: Text('确定删除「${exercise.name}」吗？'),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: const Text('取消')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('删除', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+    if (confirmed == true) {
+      await _dao.delete(exercise.id!);
+      _load();
+    }
+  }
+
+  Future<void> _addCustom() async {
+    final nameController = TextEditingController();
+    final muscleController = TextEditingController();
+    String category = '力量';
+
+    final result = await showDialog<Map<String, String>>(
+      context: context,
+
+—— 第 30 页 / 共 60 页 ——
+
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setDialogState) => AlertDialog(
+          title: const Text('创建自定义动作'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: nameController,
+                  decoration: const InputDecoration(
+                    labelText: '动作名称',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: muscleController,
+                  decoration: const InputDecoration(
+                    labelText: '目标肌群',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    const Text('类型：'),
+                    const SizedBox(width: 12),
+                    ChoiceChip(
+                      label: const Text('力量'),
+                      selected: category == '力量',
+                      onSelected: (_) =>
+                          setDialogState(() => category = '力量'),
+                    ),
+                    const SizedBox(width: 8),
+                    ChoiceChip(
+                      label: const Text('计时'),
+                      selected: category == '计时',
+                      onSelected: (_) =>
+                          setDialogState(() => category = '计时'),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+                onPressed: () => Navigator.pop(ctx),
+                child: const Text('取消')),
+            FilledButton(
+              onPressed: () {
+                if (nameController.text.trim().isEmpty) return;
+                Navigator.pop(ctx, {
+                  'name': nameController.text.trim(),
+                  'muscle': muscleController.text.trim().isEmpty
+                      ? '其他'
+                      : muscleController.text.trim(),
+                  'category': category,
+
+—— 第 31 页 / 共 60 页 ——
+
+
+  bool _showParams = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _sets = widget.preSets;
+    _reps = widget.preReps;
+    _workSeconds = widget.preWorkSeconds;
+    _restSeconds = widget.preRestSeconds;
+    _afterRestSeconds = widget.preAfterRestSeconds;
+    _searchFocus.addListener(() {
+      setState(() => _showRecent = _searchFocus.hasFocus &&
+          _searchController.text.isEmpty);
+    });
+    _loadExercises();
+  }
+
+  @override
+  void dispose() {
+    _searchFocus.dispose();
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _loadExercises() async {
+    _exercises = await _dao.getAll();
+    _filtered = _exercises;
+    if (widget.preSelectedExerciseId != null) {
+      _selected = _exercises.firstWhere(
+        (e) => e.id == widget.preSelectedExerciseId,
+        orElse: () => _exercises.first,
+      );
+      _showParams = true;
+    }
+    setState(() {});
+  }
+
+  void _filter(String query) {
+    setState(() {
+      _showRecent = _searchFocus.hasFocus && query.isEmpty;
+      if (query.isEmpty) {
+        _filtered = _exercises;
+      } else {
+        _filtered = _exercises
+            .where((e) => e.name.contains(query))
+            .toList();
+      }
+    });
+  }
+
+  void _submitSearch(String query) {
+    if (query.trim().isEmpty) return;
+    _recentSearches.remove(query);
+    _recentSearches.insert(0, query);
+    if (_recentSearches.length > 5) _recentSearches.removeLast();
+    _searchController.text = query;
+    _filter(query);
+
+—— 第 32 页 / 共 60 页 ——
+
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_showParams && _selected != null) {
+      return _buildParamsView();
+    }
+    return _buildExerciseList();
+  }
+
+  Widget _buildExerciseList() {
+    final categories = <String, List<Exercise>>{};
+    for (final e in _filtered) {
+      categories.putIfAbsent(e.muscleGroup, () => []).add(e);
+    }
+
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            Text('选择动作', style: Theme.of(context).textTheme.titleLarge),
+            const SizedBox(height: 12),
+            TextField(
+              controller: _searchController,
+              focusNode: _searchFocus,
+              decoration: const InputDecoration(
+                hintText: '搜索动作...',
+                prefixIcon: Icon(Icons.search),
+                border: OutlineInputBorder(),
+              ),
+              onChanged: _filter,
+              onSubmitted: _submitSearch,
+            ),
+            if (_showRecent && _recentSearches.isNotEmpty) ...[
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 8,
+                children: _recentSearches
+                    .map((q) => ActionChip(
+                          label: Text(q, style: const TextStyle(fontSize: 13)),
+                          onPressed: () => _submitSearch(q),
+                        ))
+                    .toList(),
+              ),
+            ],
+            const SizedBox(height: 12),
+            Expanded(
+              child: ListView(
+                children: [
+                  ...categories.entries.map((entry) {
+                    return ExpansionTile(
+                      title: Text(entry.key,
+                          style: const TextStyle(fontWeight: FontWeight.bold)),
+                      initiallyExpanded: true,
+                      children: entry.value
+                          .map((e) => ListTile(
+                                leading: Icon(e.category == '力量'
+
+—— 第 33 页 / 共 60 页 ——
+
+                                    ? Icons.fitness_center
+                                    : Icons.timer),
+                                title: Text(e.name),
+                                subtitle: Text(e.category),
+                                onTap: () {
+                                  setState(() {
+                                    _selected = e;
+                                    _showParams = true;
+                                  });
+                                },
+                              ))
+                          .toList(),
+                    );
+                  }),
+                  const Divider(),
+                  ListTile(
+                    leading: const Icon(Icons.add_circle_outline,
+                        color: Colors.green),
+                    title: const Text('自定义动作'),
+                    subtitle: const Text('创建新的训练动作'),
+                    onTap: _addCustomExercise,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildParamsView() {
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.arrow_back),
+                  onPressed: () => setState(() => _showParams = false),
+                ),
+                Text('设置参数：${_selected!.name}',
+                    style: Theme.of(context).textTheme.titleMedium),
+              ],
+            ),
+            const SizedBox(height: 16),
+            _buildNumberField(
+                '训练时长（秒/组）', _workSeconds, (v) => _workSeconds = v),
+            const SizedBox(height: 12),
+            _buildNumberField('组数', _sets, (v) => _sets = v),
+            const SizedBox(height: 12),
+            _buildNumberField(
+                '次数（可选，力量训练）', _reps ?? 0, (v) => _reps = v > 0 ? v : null),
+            const SizedBox(height: 12),
+            _buildNumberField(
+
+—— 第 34 页 / 共 60 页 ——
+
+                '组间休息（秒）', _restSeconds, (v) => _restSeconds = v),
+            const SizedBox(height: 12),
+            _buildNumberField(
+                '动作完成后休息（秒）', _afterRestSeconds, (v) => _afterRestSeconds = v),
+            const SizedBox(height: 24),
+            SizedBox(
+              width: double.infinity,
+              child: FilledButton(
+                onPressed: () {
+                  Navigator.pop(context, {
+                    'exerciseId': _selected!.id,
+                    'exerciseName': _selected!.name,
+                    'sets': _sets,
+                    'reps': _reps,
+                    'workSeconds': _workSeconds,
+                    'restSeconds': _restSeconds,
+                    'afterRestSeconds': _afterRestSeconds,
+                  });
+                },
+                child: const Text('添加到计划'),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _addCustomExercise() async {
+    final nameController = TextEditingController();
+    final muscleController = TextEditingController();
+    String category = '力量';
+
+    final result = await showDialog<Map<String, String>>(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setDialogState) => AlertDialog(
+          title: const Text('创建自定义动作'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: nameController,
+                  decoration: const InputDecoration(
+                    labelText: '动作名称',
+                    hintText: '如：罗马尼亚硬拉',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: muscleController,
+                  decoration: const InputDecoration(
+                    labelText: '目标肌群',
+                    hintText: '如：背、腿、胸',
+                    border: OutlineInputBorder(),
+                  ),
+
+—— 第 35 页 / 共 60 页 ——
+
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    const Text('类型：'),
+                    const SizedBox(width: 12),
+                    ChoiceChip(
+                      label: const Text('力量'),
+                      selected: category == '力量',
+                      onSelected: (_) =>
+                          setDialogState(() => category = '力量'),
+                    ),
+                    const SizedBox(width: 8),
+                    ChoiceChip(
+                      label: const Text('计时'),
+                      selected: category == '计时',
+                      onSelected: (_) =>
+                          setDialogState(() => category = '计时'),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+                onPressed: () => Navigator.pop(ctx),
+                child: const Text('取消')),
+            FilledButton(
+              onPressed: () {
+                if (nameController.text.trim().isEmpty) return;
+                Navigator.pop(ctx, {
+                  'name': nameController.text.trim(),
+                  'muscle': muscleController.text.trim().isEmpty
+                      ? '其他'
+                      : muscleController.text.trim(),
+                  'category': category,
+                });
+              },
+              child: const Text('创建'),
+            ),
+          ],
+        ),
+      ),
+    );
+
+    if (result != null && mounted) {
+      final exercise = Exercise(
+        name: result['name']!,
+        category: result['category']!,
+        muscleGroup: result['muscle']!,
+        iconCode: result['category'] == '力量' ? '59648' : '59654',
+        isPreset: false,
+        createdAt: DateTime.now().toIso8601String(),
+      );
+      final id = await _dao.insert(exercise);
+      _selected = exercise.copyWith(id: id);
+      _showParams = true;
+
+—— 第 36 页 / 共 60 页 ——
+
+      _loadExercises();
+    }
+  }
+
+  Widget _buildNumberField(
+      String label, int value, Function(int) onChanged) {
+    return Row(
+      children: [
+        Expanded(child: Text(label)),
+        SizedBox(
+          width: 120,
+          child: TextField(
+            keyboardType: TextInputType.number,
+            controller: TextEditingController(text: value.toString()),
+            decoration: const InputDecoration(
+                border: OutlineInputBorder(), isDense: true),
+            onChanged: (v) => onChanged(int.tryParse(v) ?? value),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// 文件: pages/history_detail_page.dart
+// -------------------------------------------------------
+
+import 'package:flutter/material.dart';
+import 'package:fitness_coach/database/session_dao.dart';
+import 'package:fitness_coach/models/workout_session.dart';
+
+class HistoryDetailPage extends StatelessWidget {
+  final WorkoutSession session;
+
+  const HistoryDetailPage({super.key, required this.session});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('训练详情'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.delete_outline),
+            onPressed: () async {
+              final confirmed = await showDialog<bool>(
+                context: context,
+                builder: (ctx) => AlertDialog(
+                  title: const Text('删除记录'),
+                  content: const Text('确定删除这条训练记录吗？'),
+                  actions: [
+                    TextButton(
+                        onPressed: () => Navigator.pop(ctx, false),
+                        child: const Text('取消')),
+                    TextButton(
+                      onPressed: () => Navigator.pop(ctx, true),
+                      child: const Text('删除',
+                          style: TextStyle(color: Colors.red)),
+
+—— 第 37 页 / 共 60 页 ——
+
+                    ),
+                  ],
+                ),
+              );
+              if (confirmed == true && context.mounted) {
+                await SessionDao().delete(session.id!);
+                Navigator.pop(context);
+              }
+            },
+          ),
+        ],
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(session.planName,
+                style: Theme.of(context)
+                    .textTheme
+                    .headlineSmall
+                    ?.copyWith(fontWeight: FontWeight.bold)),
+            const SizedBox(height: 4),
+            Text(session.formattedDate,
+                style: TextStyle(color: Colors.grey[600], fontSize: 16)),
+            const SizedBox(height: 4),
+            Text('总时长：${session.formattedDuration}',
+                style: TextStyle(color: Colors.grey[600])),
+            const Divider(height: 32),
+            ...session.completedExercises.map((e) {
+                  final done = e.completedSets >= e.plannedSets;
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: Row(
+                      children: [
+                        Icon(
+                            done
+                                ? Icons.check_circle
+                                : Icons.warning_amber_rounded,
+                            color: done ? Colors.green : Colors.orange,
+                            size: 20),
+                        const SizedBox(width: 8),
+                        Text('${e.exerciseName}  '
+                            '${e.completedSets}/${e.plannedSets}组'),
+                      ],
+                    ),
+                  );
+                }),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// 文件: pages/history_page.dart
+// -------------------------------------------------------
+
+
+—— 第 38 页 / 共 60 页 ——
+
+import 'package:flutter/material.dart';
+import 'package:fitness_coach/database/session_dao.dart';
+import 'package:fitness_coach/models/workout_session.dart';
+import 'package:fitness_coach/pages/history_detail_page.dart';
+
+class HistoryPage extends StatefulWidget {
+  const HistoryPage({super.key});
+
+  static HistoryPageState? of(BuildContext context) {
+    return context.findAncestorStateOfType<HistoryPageState>();
+  }
+
+  @override
+  State<HistoryPage> createState() => HistoryPageState();
+}
+
+class HistoryPageState extends State<HistoryPage> {
+  final SessionDao _dao = SessionDao();
+  List<WorkoutSession> _sessions = [];
+  bool _loading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSessions();
+  }
+
+  Future<void> _loadSessions() async {
+    final sessions = await _dao.getAll();
+    if (!mounted) return;
+    setState(() {
+      _sessions = sessions;
+      _loading = false;
+    });
+  }
+
+  /// 供外部调用以刷新列表（如训练完成后）
+  void refresh() {
+    _loading = true;
+    if (mounted) setState(() {});
+    _loadSessions();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('训练历史')),
+      body: _loading
+          ? const Center(child: CircularProgressIndicator())
+          : _sessions.isEmpty
+              ? Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.history, size: 64, color: Colors.grey[400]),
+                      const SizedBox(height: 16),
+                      Text('记录你的汗水',
+                          style:
+
+—— 第 39 页 / 共 60 页 ——
+
+                              TextStyle(fontSize: 18, color: Colors.grey[600])),
+                      const SizedBox(height: 8),
+                      Text('完成训练后，这里会记录每一次的坚持',
+                          style: TextStyle(color: Colors.grey[500])),
+                    ],
+                  ),
+                )
+              : ListView.builder(
+                  padding: const EdgeInsets.all(16),
+                  itemCount: _sessions.length,
+                  itemBuilder: (context, index) {
+                    final session = _sessions[index];
+                    return Card(
+                      margin: const EdgeInsets.only(bottom: 8),
+                      child: ListTile(
+                        leading: Icon(
+                            session.finishedAt != null
+                                ? Icons.check_circle_outline
+                                : Icons.cancel_outlined,
+                            color: session.finishedAt != null
+                                ? Colors.green
+                                : Colors.orange),
+                        title: Text(session.finishedAt != null
+                            ? session.planName
+                            : '${session.planName} (未完成)'),
+                        subtitle: Text(
+                            '${session.formattedDate} · ${session.completedExercises.length}动作 · ${session.formattedDuration}'),
+                        trailing: const Icon(Icons.chevron_right),
+                        onTap: () async {
+                          await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) =>
+                                  HistoryDetailPage(session: session),
+                            ),
+                          );
+                          _loadSessions();
+                        },
+                      ),
+                    );
+                  },
+                ),
+    );
+  }
+}
+
+// 文件: pages/home_page.dart
+// -------------------------------------------------------
+
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:fitness_coach/providers/plan_provider.dart';
+import 'package:fitness_coach/providers/workout_provider.dart';
+import 'package:fitness_coach/providers/settings_provider.dart';
+import 'package:fitness_coach/models/training_plan.dart';
+import 'package:fitness_coach/pages/plan_edit_page.dart';
+import 'package:fitness_coach/pages/workout_page.dart';
+import 'package:fitness_coach/pages/history_page.dart';
+
+—— 第 40 页 / 共 60 页 ——
+
+import 'package:fitness_coach/pages/settings_page.dart';
+import 'package:fitness_coach/pages/exercise_manage_page.dart';
+import 'package:fitness_coach/widgets/plan_card.dart';
+
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  int _currentTab = 0;
+  final _historyKey = GlobalKey<HistoryPageState>();
+
+  late final _pages = [
+    _PlanListTab(historyKey: _historyKey),
+    const ExerciseManagePage(),
+    HistoryPage(key: _historyKey),
+    const SettingsPage(),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: IndexedStack(
+        index: _currentTab,
+        children: _pages,
+      ),
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: _currentTab,
+        onDestinationSelected: (index) => setState(() => _currentTab = index),
+        destinations: const [
+          NavigationDestination(
+              icon: Icon(Icons.fitness_center), label: '计划'),
+          NavigationDestination(
+              icon: Icon(Icons.sports_gymnastics), label: '动作'),
+          NavigationDestination(icon: Icon(Icons.history), label: '历史'),
+          NavigationDestination(icon: Icon(Icons.settings), label: '设置'),
+        ],
+      ),
+    );
+  }
+}
+
+class _PlanListTab extends StatelessWidget {
+  final GlobalKey<HistoryPageState> historyKey;
+  const _PlanListTab({required this.historyKey});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('🏋️ 健身好搭子')),
+      body: Consumer<PlanProvider>(
+        builder: (context, provider, _) {
+          if (provider.loading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+—— 第 41 页 / 共 60 页 ——
+
+          if (provider.plans.isEmpty) {
+            return Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.fitness_center,
+                      size: 64, color: Colors.grey[400]),
+                  const SizedBox(height: 16),
+                  Text('编排你的训练',
+                      style: TextStyle(fontSize: 18, color: Colors.grey[600])),
+                  const SizedBox(height: 8),
+                  Text('点击下方按钮，开始编排训练计划',
+                      style: TextStyle(color: Colors.grey[500])),
+                ],
+              ),
+            );
+          }
+          return ReorderableListView.builder(
+            padding: const EdgeInsets.all(16),
+            itemCount: provider.plans.length,
+            buildDefaultDragHandles: false,
+            onReorderItem: (oldIndex, newIndex) {
+              provider.reorderPlans(oldIndex, newIndex);
+            },
+            itemBuilder: (context, index) {
+              final plan = provider.plans[index];
+              return PlanCard(
+                key: ValueKey(plan.id),
+                index: index,
+                plan: plan,
+                onTap: () => _onStartWorkout(context, plan),
+                onLongPress: () => _onEditPlan(context, plan),
+              );
+            },
+          );
+        },
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        heroTag: 'create_plan',
+        onPressed: () => _onCreatePlan(context),
+        icon: const Icon(Icons.add),
+        label: const Text('新建计划'),
+      ),
+    );
+  }
+
+  void _onStartWorkout(BuildContext context, TrainingPlan plan) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(plan.name),
+        content:
+            Text('${plan.exerciseCount} 个动作 · ${plan.estimatedDurationText}'),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: const Text('取消')),
+          FilledButton(
+
+—— 第 42 页 / 共 60 页 ——
+
+              onPressed: () => Navigator.pop(ctx, true),
+              child: const Text('开始训练')),
+        ],
+      ),
+    );
+    if (confirmed == true && context.mounted) {
+      final interval = context.read<SettingsProvider>().reminderInterval;
+      context.read<WorkoutProvider>().loadPlan(plan, intervalSeconds: interval);
+      await Navigator.push(
+          context, MaterialPageRoute(builder: (_) => const WorkoutPage()));
+      historyKey.currentState?.refresh();
+    }
+  }
+
+  void _onEditPlan(BuildContext context, TrainingPlan plan) async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => PlanEditPage(plan: plan)),
+    );
+    if (context.mounted) context.read<PlanProvider>().loadPlans();
+  }
+
+  void _onCreatePlan(BuildContext context) async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const PlanEditPage()),
+    );
+    if (context.mounted) context.read<PlanProvider>().loadPlans();
+  }
+}
+
+// 文件: pages/plan_edit_page.dart
+// -------------------------------------------------------
+
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:fitness_coach/providers/plan_provider.dart';
+import 'package:fitness_coach/models/training_plan.dart';
+import 'package:fitness_coach/models/plan_exercise.dart';
+import 'package:fitness_coach/pages/exercise_picker.dart';
+
+class PlanEditPage extends StatefulWidget {
+  final TrainingPlan? plan;
+
+  const PlanEditPage({super.key, this.plan});
+
+  @override
+  State<PlanEditPage> createState() => _PlanEditPageState();
+}
+
+class _PlanEditPageState extends State<PlanEditPage> {
+  late TextEditingController _nameController;
+  late TextEditingController _descController;
+  late List<PlanExercise> _exercises;
+  bool _isNew = true;
+
+  @override
+  void initState() {
+
+—— 第 43 页 / 共 60 页 ——
+
+    super.initState();
+    final plan = widget.plan;
+    _isNew = plan == null;
+    _nameController = TextEditingController(text: plan?.name ?? '');
+    _descController = TextEditingController(text: plan?.description ?? '');
+    _exercises = plan?.exercises.map((e) => e).toList() ?? [];
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _descController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(_isNew ? '新建计划' : '编辑计划'),
+        actions: [
+          TextButton.icon(
+            onPressed: _save,
+            icon: const Icon(Icons.save),
+            label: const Text('保存'),
+          ),
+        ],
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            TextField(
+              controller: _nameController,
+              decoration: const InputDecoration(
+                labelText: '计划名称',
+                hintText: '如：推胸日',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: _descController,
+              decoration: const InputDecoration(
+                labelText: '计划描述（可选）',
+                border: OutlineInputBorder(),
+              ),
+              maxLines: 2,
+            ),
+            const SizedBox(height: 24),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('动作列表',
+                    style: Theme.of(context).textTheme.titleMedium),
+                Text('${_exercises.length} 个动作',
+                    style: TextStyle(color: Colors.grey[600])),
+
+—— 第 44 页 / 共 60 页 ——
+
+              ],
+            ),
+            const SizedBox(height: 8),
+            ReorderableListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: _exercises.length,
+              onReorderItem: (oldIndex, newIndex) {
+                setState(() {
+                  final item = _exercises.removeAt(oldIndex);
+                  _exercises.insert(newIndex, item);
+                });
+              },
+              itemBuilder: (context, index) {
+                final pe = _exercises[index];
+                return Card(
+                  key: ValueKey(pe.exerciseId * 1000 + index),
+                  child: ListTile(
+                    leading: const Icon(Icons.drag_handle),
+                    title: Text(pe.exerciseName ?? '动作${index + 1}'),
+                    subtitle: Text(
+                        '${pe.sets}组 · ${pe.workSeconds}秒/组 · 组休${pe.restSeconds}秒${pe.afterRestSeconds > 0 ? ' · 动休${pe.afterRestSeconds}秒' : ''}'),
+                    trailing: IconButton(
+                      icon: const Icon(Icons.delete_outline, color: Colors.red),
+                      onPressed: () =>
+                          setState(() => _exercises.removeAt(index)),
+                    ),
+                    onTap: () => _editExercise(index),
+                  ),
+                );
+              },
+            ),
+            const SizedBox(height: 12),
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton.icon(
+                onPressed: _addExercise,
+                icon: const Icon(Icons.add),
+                label: const Text('添加动作'),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _addExercise() async {
+    final result = await showModalBottomSheet<Map<String, dynamic>>(
+      context: context,
+      isScrollControlled: true,
+      builder: (_) => const ExercisePicker(),
+    );
+    if (result != null) {
+      setState(() {
+        _exercises.add(PlanExercise(
+          planId: widget.plan?.id ?? 0,
+          exerciseId: result['exerciseId'] as int,
+
+—— 第 45 页 / 共 60 页 ——
+
+          sortOrder: _exercises.length,
+          sets: result['sets'] as int,
+          reps: result['reps'] as int?,
+          workSeconds: result['workSeconds'] as int,
+          restSeconds: result['restSeconds'] as int,
+          afterRestSeconds: result['afterRestSeconds'] as int? ?? 0,
+          exerciseName: result['exerciseName'] as String?,
+        ));
+      });
+    }
+  }
+
+  void _editExercise(int index) async {
+    final existing = _exercises[index];
+    final result = await showModalBottomSheet<Map<String, dynamic>>(
+      context: context,
+      isScrollControlled: true,
+      builder: (_) => ExercisePicker(
+        preSelectedExerciseId: existing.exerciseId,
+        preSets: existing.sets,
+        preReps: existing.reps,
+        preWorkSeconds: existing.workSeconds,
+        preRestSeconds: existing.restSeconds,
+        preAfterRestSeconds: existing.afterRestSeconds,
+      ),
+    );
+    if (result != null) {
+      setState(() {
+        _exercises[index] = PlanExercise(
+          planId: existing.planId,
+          exerciseId: result['exerciseId'] as int,
+          sortOrder: existing.sortOrder,
+          sets: result['sets'] as int,
+          reps: result['reps'] as int?,
+          workSeconds: result['workSeconds'] as int,
+          restSeconds: result['restSeconds'] as int,
+          afterRestSeconds: result['afterRestSeconds'] as int? ?? 0,
+          exerciseName: result['exerciseName'] as String?,
+        );
+      });
+    }
+  }
+
+  void _save() async {
+    if (_nameController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('请输入计划名称')),
+      );
+      return;
+    }
+
+    final provider = context.read<PlanProvider>();
+    final plan = TrainingPlan(
+      id: widget.plan?.id,
+      name: _nameController.text.trim(),
+      description:
+          _descController.text.trim().isEmpty ? null : _descController.text.trim(),
+      createdAt: widget.plan?.createdAt,
+
+—— 第 46 页 / 共 60 页 ——
+
+      updatedAt: DateTime.now().toIso8601String(),
+    );
+
+    int planId;
+    if (_isNew) {
+      planId = await provider.createPlan(plan);
+    } else {
+      await provider.updatePlan(plan);
+      planId = plan.id!;
+    }
+
+    final exercises =
+        _exercises.map((e) => e.copyWith(planId: planId)).toList();
+    await provider.savePlanExercises(planId, exercises);
+
+    if (mounted) Navigator.pop(context);
+  }
+}
+
+// 文件: pages/settings_page.dart
+// -------------------------------------------------------
+
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:fitness_coach/providers/settings_provider.dart';
+
+class SettingsPage extends StatelessWidget {
+  const SettingsPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('设置')),
+      body: Consumer<SettingsProvider>(
+        builder: (context, settings, _) {
+          return ListView(
+            padding: const EdgeInsets.all(16),
+            children: [
+              _buildSectionTitle(context, '教练'),
+              SwitchListTile(
+                title: const Text('语音播报'),
+                value: settings.ttsEnabled,
+                onChanged: (_) => settings.toggleTts(),
+              ),
+              SwitchListTile(
+                title: const Text('震动反馈'),
+                value: settings.hapticEnabled,
+                onChanged: (_) => settings.toggleHaptic(),
+              ),
+              ListTile(
+                title: const Text('间隔提醒'),
+                subtitle: const Text('倒计时中每隔一段时间播报剩余秒数'),
+                trailing: Text(settings.reminderIntervalLabel,
+                    style: Theme.of(context).textTheme.bodyLarge),
+                onTap: () => _showIntervalPicker(context, settings),
+              ),
+              const Divider(),
+              _buildSectionTitle(context, '界面'),
+
+—— 第 47 页 / 共 60 页 ——
+
+              SwitchListTile(
+                title: const Text('快捷暂停'),
+                subtitle: const Text('训练/休息时点击屏幕任意位置暂停'),
+                value: settings.tapToPause,
+                onChanged: (_) => settings.toggleTapToPause(),
+              ),
+              const Divider(),
+              _buildSectionTitle(context, '关于'),
+              ListTile(
+                title: const Text('版本'),
+                trailing: Text('v1.2.3',
+                    style: Theme.of(context).textTheme.bodyLarge),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildSectionTitle(BuildContext context, String title) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 16, top: 16, bottom: 8),
+      child: Text(
+        title,
+        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+              color: Theme.of(context).colorScheme.primary,
+              fontWeight: FontWeight.bold,
+            ),
+      ),
+    );
+  }
+}
+
+Future<void> _showIntervalPicker(
+    BuildContext context, SettingsProvider settings) async {
+  const options = [0, 5, 10, 15, 20, 30];
+  const labels = ['关闭', '5秒', '10秒', '15秒', '20秒', '30秒'];
+  await showDialog<void>(
+    context: context,
+    builder: (ctx) => SimpleDialog(
+      title: const Text('间隔提醒'),
+      children: List.generate(options.length, (i) {
+        final selected = options[i] == settings.reminderInterval;
+        return RadioListTile<int>(
+          title: Text(labels[i]),
+          value: options[i],
+          groupValue: settings.reminderInterval,
+          selected: selected,
+          onChanged: (v) {
+            settings.setReminderInterval(v!);
+            Navigator.pop(ctx);
+          },
+        );
+      }),
+    ),
+  );
+}
+
+—— 第 48 页 / 共 60 页 ——
+
+
+// 文件: pages/workout_page.dart
+// -------------------------------------------------------
+
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:fitness_coach/providers/workout_provider.dart';
+import 'package:fitness_coach/providers/settings_provider.dart';
+import 'package:fitness_coach/services/coach_engine.dart';
+import 'package:fitness_coach/widgets/countdown_ring.dart';
+import 'package:fitness_coach/pages/workout_summary_page.dart';
+
+class WorkoutPage extends StatefulWidget {
+  const WorkoutPage({super.key});
+
+  @override
+  State<WorkoutPage> createState() => _WorkoutPageState();
+}
+
+class _WorkoutPageState extends State<WorkoutPage> {
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() {
+      context.read<WorkoutProvider>().startWorkout();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, _) async {
+        if (didPop) return;
+        final shouldExit = await _showExitDialog();
+        if (shouldExit && mounted) {
+          context.read<WorkoutProvider>().stopWorkout();
+          Navigator.of(context).pop();
+        }
+      },
+      child: Scaffold(
+        body: SafeArea(
+          child: Consumer2<WorkoutProvider, SettingsProvider>(
+            builder: (context, provider, settings, _) {
+              final state = provider.coachState;
+
+              if (state.phase == CoachPhase.completed) {
+                Future.microtask(() {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => WorkoutSummaryPage(state: state),
+                    ),
+                  );
+                });
+                return const SizedBox.shrink();
+              }
+
+
+—— 第 49 页 / 共 60 页 ——
+
+              final canTapPause = settings.tapToPause &&
+                  (state.phase == CoachPhase.working ||
+                      state.phase == CoachPhase.resting ||
+                      state.phase == CoachPhase.postExerciseResting);
+
+              return GestureDetector(
+                behavior: HitTestBehavior.translucent,
+                onTap: canTapPause ? () => provider.pause() : null,
+                child: _buildWorkoutView(context, state),
+              );
+            },
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildWorkoutView(BuildContext context, CoachState state) {
+    final isPaused = state.phase == CoachPhase.paused;
+    final showPauseBtn = state.phase == CoachPhase.working ||
+        state.phase == CoachPhase.resting ||
+        state.phase == CoachPhase.postExerciseResting;
+
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Row(
+            children: [
+              IconButton(
+                icon: const Icon(Icons.close),
+                onPressed: () async {
+                  final shouldExit = await _showExitDialog();
+                  if (shouldExit && mounted) {
+                    context.read<WorkoutProvider>().stopWorkout();
+                    Navigator.of(context).pop();
+                  }
+                },
+              ),
+              const Spacer(),
+              if (showPauseBtn)
+                IconButton(
+                  icon: const Icon(Icons.pause_circle_filled, size: 32),
+                  onPressed: () => context.read<WorkoutProvider>().pause(),
+                ),
+            ],
+          ),
+        ),
+        const Spacer(),
+        if (isPaused)
+          _buildPausedView(context)
+        else
+          _buildActiveView(context, state),
+        const Spacer(),
+        if (!isPaused) _buildBottomInfo(context, state),
+        const SizedBox(height: 8),
+      ],
+    );
+
+—— 第 50 页 / 共 60 页 ——
+
+  }
+
+  Widget _buildActiveView(BuildContext context, CoachState state) {
+    final phase = state.phase;
+
+    if (phase == CoachPhase.announcing || phase == CoachPhase.transitioning) {
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            state.currentExercise?.exerciseName ?? '',
+            style: Theme.of(context)
+                .textTheme
+                .headlineMedium
+                ?.copyWith(fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            '${state.currentExercise?.sets ?? 0}组 · ${state.currentExercise?.workSeconds ?? 0}秒/组',
+            style: TextStyle(fontSize: 18, color: Colors.grey[600]),
+          ),
+          const SizedBox(height: 32),
+          const CircularProgressIndicator(),
+        ],
+      );
+    }
+
+    if (phase == CoachPhase.working ||
+        phase == CoachPhase.resting ||
+        phase == CoachPhase.postExerciseResting) {
+      final bool isWorking = phase == CoachPhase.working;
+      final bool isPostExercise = phase == CoachPhase.postExerciseResting;
+      final int total = isWorking
+          ? (state.currentExercise?.workSeconds ?? 45)
+          : isPostExercise
+              ? (state.currentExercise?.afterRestSeconds ?? 0)
+              : (state.currentExercise?.restSeconds ?? 60);
+
+      Color ringColor;
+      if (isWorking) {
+        ringColor = Colors.red;
+      } else if (isPostExercise) {
+        ringColor = Colors.green;
+      } else {
+        ringColor = Colors.orange;
+      }
+
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          CountdownRing(
+            remainingSeconds: state.remainingSeconds,
+            totalSeconds: total,
+            size: 200,
+            color: ringColor,
+          ),
+          const SizedBox(height: 24),
+          Text(
+
+—— 第 51 页 / 共 60 页 ——
+
+            state.currentExercise?.exerciseName ?? '',
+            style: Theme.of(context)
+                .textTheme
+                .headlineSmall
+                ?.copyWith(fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            isWorking
+                ? '第 ${state.currentSetIndex + 1} / ${state.totalSetsForCurrentExercise} 组'
+                : isPostExercise
+                    ? '动作完成，休息中...'
+                    : '组间休息中...',
+            style: TextStyle(fontSize: 18, color: Colors.grey[600]),
+          ),
+          const SizedBox(height: 16),
+          Visibility(
+            maintainSize: true,
+            maintainAnimation: true,
+            maintainState: true,
+            visible: !isWorking,
+            child: TextButton.icon(
+              onPressed: () => context.read<WorkoutProvider>().skipRest(),
+              icon: const Icon(Icons.skip_next),
+              label: const Text('跳过休息'),
+            ),
+          ),
+        ],
+      );
+    }
+
+    return const SizedBox.shrink();
+  }
+
+  Widget _buildPausedView(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        const Icon(Icons.pause_circle_outline,
+            size: 80, color: Colors.grey),
+        const SizedBox(height: 16),
+        const Text('暂停中',
+            style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
+        const SizedBox(height: 32),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            FilledButton.icon(
+              onPressed: () => context.read<WorkoutProvider>().resume(),
+              icon: const Icon(Icons.play_arrow),
+              label: const Text('继续'),
+            ),
+            const SizedBox(width: 24),
+            OutlinedButton.icon(
+              onPressed: () async {
+                final shouldExit = await _showExitDialog();
+                if (shouldExit && mounted) {
+                  context.read<WorkoutProvider>().stopWorkout();
+
+—— 第 52 页 / 共 60 页 ——
+
+                  Navigator.of(context).pop();
+                }
+              },
+              icon: const Icon(Icons.stop),
+              label: const Text('结束训练'),
+              style: OutlinedButton.styleFrom(foregroundColor: Colors.red),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildBottomInfo(BuildContext context, CoachState state) {
+    final progress = state.overallProgress;
+    final exercises = state.exercises;
+    final currentIdx = state.currentExerciseIndex;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(4),
+            child: LinearProgressIndicator(
+              value: progress,
+              minHeight: 6,
+              backgroundColor: Colors.grey[200],
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text('${currentIdx + 1} / ${state.totalExercises} 动作',
+              style: TextStyle(
+                color: Colors.grey[500],
+                fontSize: 12,
+                fontFeatures: [FontFeature.tabularFigures()],
+              )),
+          const SizedBox(height: 8),
+          SizedBox(
+            height: 112,
+            child: ListView.builder(
+              itemCount: exercises.length,
+              itemBuilder: (context, i) {
+                final ex = exercises[i];
+                final isPast = i < currentIdx;
+                final isCurrent = i == currentIdx;
+
+                IconData icon;
+                Color iconColor;
+                if (isPast) {
+                  icon = Icons.check_circle;
+                  iconColor = Colors.green;
+                } else if (isCurrent) {
+                  icon = Icons.play_circle_filled;
+                  iconColor = Theme.of(context).colorScheme.primary;
+                } else {
+                  icon = Icons.circle_outlined;
+
+—— 第 53 页 / 共 60 页 ——
+
+                  iconColor = Colors.grey[400]!;
+                }
+
+                return SizedBox(
+                  height: 32,
+                  child: Row(
+                    children: [
+                      Icon(icon, size: 18, color: iconColor),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Text(
+                          ex.exerciseName ?? '',
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: isCurrent ? FontWeight.w700 : FontWeight.w500,
+                            color: isPast
+                                ? Colors.grey[400]
+                                : isCurrent
+                                    ? null
+                                    : Colors.grey[700],
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      Text(
+                        '${ex.sets}组',
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<bool> _showExitDialog() async {
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('结束训练？'),
+        content: const Text('确定要结束当前训练吗？'),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: const Text('继续训练')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child:
+                const Text('结束', style: TextStyle(color: Colors.red)),
+          ),
+
+—— 第 54 页 / 共 60 页 ——
+
+        ],
+      ),
+    );
+    return result ?? false;
+  }
+}
+
+// 文件: pages/workout_summary_page.dart
+// -------------------------------------------------------
+
+import 'package:flutter/material.dart';
+import 'package:fitness_coach/services/coach_engine.dart';
+
+class WorkoutSummaryPage extends StatelessWidget {
+  final CoachState state;
+
+  const WorkoutSummaryPage({super.key, required this.state});
+
+  @override
+  Widget build(BuildContext context) {
+    final totalSeconds = state.exercises.fold<int>(
+      0,
+      (sum, e) =>
+          sum + e.workSeconds * e.sets + e.restSeconds * (e.sets - 1),
+    );
+
+    return Scaffold(
+      body: SafeArea(
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(32),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text('🎉', style: TextStyle(fontSize: 64)),
+                const SizedBox(height: 16),
+                Text('训练完成！',
+                    style: Theme.of(context)
+                        .textTheme
+                        .headlineMedium
+                        ?.copyWith(fontWeight: FontWeight.bold)),
+                const SizedBox(height: 24),
+                Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: Column(
+                      children: [
+                        Text(_formatDuration(totalSeconds),
+                            style: Theme.of(context)
+                                .textTheme
+                                .displaySmall
+                                ?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .primary)),
+                        const Text('总时长'),
+                      ],
+
+—— 第 55 页 / 共 60 页 ——
+
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 24),
+                ...state.exercises.map((e) => ListTile(
+                      leading: const Icon(Icons.check_circle,
+                          color: Colors.green),
+                      title: Text(e.exerciseName ?? ''),
+                      subtitle: Text('${e.sets}组完成'),
+                    )),
+                const SizedBox(height: 24),
+                SizedBox(
+                  width: double.infinity,
+                  child: FilledButton(
+                    onPressed: () => Navigator.of(context)
+                        .popUntil((route) => route.isFirst),
+                    child: const Text('返回首页'),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  String _formatDuration(int seconds) {
+    final m = seconds ~/ 60;
+    final s = seconds % 60;
+    if (m == 0) return '${s}秒';
+    return '${m}分${s}秒';
+  }
+}
+
+// 文件: widgets/countdown_ring.dart
+// -------------------------------------------------------
+
+import 'package:flutter/material.dart';
+
+class CountdownRing extends StatelessWidget {
+  final int remainingSeconds;
+  final int totalSeconds;
+  final double size;
+  final Color? color;
+
+  const CountdownRing({
+    super.key,
+    required this.remainingSeconds,
+    required this.totalSeconds,
+    this.size = 200,
+    this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final progress = totalSeconds > 0 ? remainingSeconds / totalSeconds : 0.0;
+
+—— 第 56 页 / 共 60 页 ——
+
+    final activeColor = color ?? colorScheme.primary;
+
+    return SizedBox(
+      width: size,
+      height: size,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          SizedBox(
+            width: size,
+            height: size,
+            child: CircularProgressIndicator(
+              value: progress,
+              strokeWidth: 12,
+              backgroundColor: Colors.grey[200],
+              valueColor: AlwaysStoppedAnimation(activeColor),
+            ),
+          ),
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                '$remainingSeconds',
+                style: TextStyle(
+                  fontSize: 56,
+                  fontWeight: FontWeight.bold,
+                  color: activeColor,
+                  fontFeatures: [FontFeature.tabularFigures()],
+                ),
+              ),
+              Text('秒',
+                  style: TextStyle(fontSize: 18, color: Colors.grey[600])),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// 文件: widgets/plan_card.dart
+// -------------------------------------------------------
+
+import 'package:flutter/material.dart';
+import 'package:fitness_coach/models/training_plan.dart';
+
+class PlanCard extends StatelessWidget {
+  final TrainingPlan plan;
+  final int index;
+  final VoidCallback onTap;
+  final VoidCallback? onLongPress;
+
+  const PlanCard({
+    super.key,
+    required this.plan,
+    required this.index,
+    required this.onTap,
+    this.onLongPress,
+
+—— 第 57 页 / 共 60 页 ——
+
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return Card(
+      margin: const EdgeInsets.only(bottom: 12),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(28),
+      ),
+      child: InkWell(
+        onTap: onTap,
+        onLongPress: onLongPress,
+        borderRadius: BorderRadius.circular(28),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            children: [
+              Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  color: colorScheme.primaryContainer,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(Icons.fitness_center, color: colorScheme.primary),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(plan.name,
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleMedium
+                            ?.copyWith(fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 4),
+                    Text(
+                      '${plan.exerciseCount}个动作 · ${plan.estimatedDurationText}',
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodySmall
+                          ?.copyWith(color: Colors.grey),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 8),
+              ReorderableDragStartListener(
+                index: index,
+                child: SizedBox(
+                  width: 40,
+                  height: 40,
+                  child: Center(
+                    child: Icon(Icons.drag_handle,
+                        size: 24, color: Colors.grey[400]),
+                  ),
+
+—— 第 58 页 / 共 60 页 ——
+
+                ),
+              ),
+              Icon(Icons.chevron_right, size: 24, color: Colors.grey[400]),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// 文件: app.dart
+// -------------------------------------------------------
+
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:fitness_coach/providers/plan_provider.dart';
+import 'package:fitness_coach/providers/workout_provider.dart';
+import 'package:fitness_coach/providers/settings_provider.dart';
+import 'package:fitness_coach/services/tts_service.dart';
+import 'package:fitness_coach/services/haptic_service.dart';
+import 'package:fitness_coach/services/notification_service.dart';
+import 'package:fitness_coach/pages/home_page.dart';
+
+class FitnessCoachApp extends StatelessWidget {
+  final TtsService ttsService;
+  final HapticService hapticService;
+  final NotificationService notificationService;
+
+  const FitnessCoachApp({
+    super.key,
+    required this.ttsService,
+    required this.hapticService,
+    required this.notificationService,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => PlanProvider()..loadPlans()),
+        ChangeNotifierProvider(create: (_) => WorkoutProvider(
+          tts: ttsService,
+          haptic: hapticService,
+        )),
+        ChangeNotifierProvider(
+          create: (_) => SettingsProvider(
+            tts: ttsService,
+            haptic: hapticService,
+            notification: notificationService,
+          ),
+        ),
+      ],
+      child: MaterialApp(
+        title: '健身好搭子',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(
+
+—— 第 59 页 / 共 60 页 ——
+
+            seedColor: const Color(0xFF4CAF50),
+            brightness: Brightness.light,
+          ),
+          useMaterial3: true,
+          appBarTheme: const AppBarTheme(
+            centerTitle: true,
+            elevation: 0,
+          ),
+        ),
+        home: const HomePage(),
+      ),
+    );
+  }
+}
+
+// 文件: main.dart
+// -------------------------------------------------------
+
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show rootBundle;
+import 'dart:convert';
+import 'package:fitness_coach/app.dart';
+import 'package:fitness_coach/database/database_helper.dart';
+import 'package:fitness_coach/database/exercise_dao.dart';
+import 'package:fitness_coach/services/tts_service.dart';
+import 'package:fitness_coach/services/haptic_service.dart';
+import 'package:fitness_coach/services/notification_service.dart';
+import 'package:fitness_coach/models/exercise.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // 初始化数据库
+  final dbHelper = DatabaseHelper();
+  await dbHelper.database;
+
+  // 导入预置动作（增量：只添加新增的预设，不覆盖已有）
+  final exerciseDao = ExerciseDao();
+  final jsonStr =
+      await rootBundle.loadString('assets/data/preset_exercises.json');
+  final List<dynamic> data = json.decode(jsonStr);
+  final newExercises = data
+      .map((e) => Exercise(
+            name: e['name'] as String,
+            category: e['category'] as String,
+            muscleGroup: e['muscle_group'] as String,
+            iconCode: e['icon_code'] as String,
+            description: e['description'] as String?,
+            isPreset: true,
+            createdAt: DateTime.now().toIso8601String(),
+          ))
+      .toList();
+  await exerciseDao.syncPresetExercises(newExercises);
+
+  // 初始化服务
+  final ttsService = TtsService();
+  await ttsService.init();
+
+
+—— 第 60 页 / 共 60 页 ——
+
+  final hapticService = HapticService();
+
+  final notificationService = NotificationService();
+  await notificationService.init();
+
+  runApp(FitnessCoachApp(
+    ttsService: ttsService,
+    hapticService: hapticService,
+    notificationService: notificationService,
+  ));
+
+  // 首帧渲染后再播放欢迎词，避免白屏时发声
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    ttsService.warmUp();
+  });
+}
+
+

@@ -44,7 +44,7 @@ class SettingsPage extends StatelessWidget {
               _buildSectionTitle(context, '关于'),
               ListTile(
                 title: const Text('版本'),
-                trailing: Text('v1.2.2',
+                trailing: Text('v1.2.3',
                     style: Theme.of(context).textTheme.bodyLarge),
               ),
             ],
