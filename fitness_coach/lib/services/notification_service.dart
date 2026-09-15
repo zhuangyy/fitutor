@@ -25,7 +25,6 @@ class NotificationService {
     const settings = InitializationSettings(
       android: androidSettings,
       iOS: darwinSettings,
-      macOS: darwinSettings,
     );
     await _plugin.initialize(settings: settings);
   }
@@ -57,7 +56,6 @@ class NotificationService {
           priority: Priority.high,
         ),
         iOS: DarwinNotificationDetails(),
-        macOS: DarwinNotificationDetails(),
       ),
       androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
       matchDateTimeComponents: DateTimeComponents.time,

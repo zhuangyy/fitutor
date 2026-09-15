@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-跟我练 — 一个健身动作编排和跟练 App（Android + iOS + macOS）。面向有一定健身基础、知道自己该练什么、会自己编排动作，但希望有个声音在耳边指导、伴随锻炼的使用者。7 个预置基础动作，其余由用户自行编排。100% 离线，无账号。
+健身好搭子 — 一个健身动作编排和跟练 App（Android + iOS）。面向有一定健身基础、知道自己该练什么、会自己编排动作，但希望有个声音在耳边指导、伴随锻炼的使用者。7 个预置基础动作，其余由用户自行编排。100% 离线，无账号。
 
 ## Commands
 
@@ -80,7 +80,7 @@ COMPLETED
 - **Countdown ring colors:** red (working), orange (between-set rest), green (post-exercise rest)
 - **Timer:** `DateTime.now()` delta from `_timerBase`, not `Timer` ticks — survives iOS suspension
 - **TTS:** Serial via `TtsService.speak()` with `awaitSpeakCompletion(true)` set once in `init()`
-- **Beep:** Android `AudioTrack` 880Hz PCM, iOS `AudioServicesPlaySystemSound(1057)`, macOS WAV via `afplay`
+- **Beep:** Android `AudioTrack` 880Hz PCM, iOS `AudioServicesPlaySystemSound(1057)`
 - **Background keep-alive:** iOS silent audio loop, Android foreground service
 
 ### Providers

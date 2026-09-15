@@ -5,8 +5,8 @@ import 'package:flutter/services.dart';
 /// iOS: 静默音频保持 AVAudioSession 活跃。
 /// Android: 前台 Service 保持进程存活。
 class BackgroundServiceManager {
-  static const _iosChannel = MethodChannel('com.fitutor/audio_bridge');
-  static const _androidChannel = MethodChannel('com.fitutor/foreground_service');
+  static const _iosChannel = MethodChannel('com.xzgg.fitutor/audio_bridge');
+  static const _androidChannel = MethodChannel('com.xzgg.fitutor/foreground_service');
 
   /// 开始训练时调用，启动平台后台保活。
   Future<void> startWorkout() async {

@@ -62,7 +62,7 @@ class SilentAudioPlayer {
         guard let registrar = engineBridge.pluginRegistry.registrar(forPlugin: "FitutorAudio")
         else { return }
         let channel = FlutterMethodChannel(
-            name: "com.fitutor/audio_bridge",
+            name: "com.xzgg.fitutor/audio_bridge",
             binaryMessenger: registrar.messenger())
         channel.setMethodCallHandler { [weak self] (call: FlutterMethodCall, result: @escaping FlutterResult) in
             switch call.method {

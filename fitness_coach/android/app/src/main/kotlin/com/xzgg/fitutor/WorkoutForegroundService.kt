@@ -1,4 +1,4 @@
-package com.fitutor.fitness_coach
+package com.xzgg.fitutor
 
 import android.app.Notification
 import android.app.NotificationChannel
