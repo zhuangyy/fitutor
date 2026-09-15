@@ -1,9 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:fitness_coach/providers/settings_provider.dart';
 
-class SettingsPage extends StatelessWidget {
+class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
+
+  @override
+  State<SettingsPage> createState() => _SettingsPageState();
+}
+
+class _SettingsPageState extends State<SettingsPage> {
+  // 从应用包信息读取真实版本（与 pubspec.yaml 的 version 一致）
+  final Future<PackageInfo> _packageInfo = PackageInfo.fromPlatform();
 
   @override
   Widget build(BuildContext context) {
@@ -44,8 +53,13 @@ class SettingsPage extends StatelessWidget {
               _buildSectionTitle(context, '关于'),
               ListTile(
                 title: const Text('版本'),
-                trailing: Text('v1.3.0',
-                    style: Theme.of(context).textTheme.bodyLarge),
+                trailing: FutureBuilder<PackageInfo>(
+                  future: _packageInfo,
+                  builder: (context, snap) => Text(
+                    snap.hasData ? 'v${snap.data!.version}' : '',
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
+                ),
               ),
             ],
           );
