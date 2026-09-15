@@ -47,6 +47,5 @@ app.*.map.json
 # Reasonix local agent data
 .reasonix/
 
-# Flutter build outputs (nested under fitness_coach/)
-fitness_coach/build/
-fitness_coach/android/build/
+# Android build outputs
+/android/build/

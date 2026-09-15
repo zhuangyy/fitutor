@@ -8,7 +8,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Commands
 
-All commands run from `fitness_coach/`. The repo root contains Reasonix AI agent config (`.reasonix/`, `reasonix.toml`) — not part of the Flutter build.
+Commands run from the repository root. The Reasonix AI agent config (`.reasonix/`, `reasonix.toml`) is not part of the Flutter build.
 
 ```bash
 # Run the app (device/emulator required)

@@ -15,12 +15,9 @@ temperature       = 0.0
 auto_plan   = "off"   # off|on; off keeps plan mode manual
 # reasoning_language = "zh"   # visible reasoning language: auto|zh|en
 # auto_plan_classifier = "deepseek-flash"   # optional; only used for borderline tasks
-soft_compact_ratio  = 0.5   # notice only; keeps cache-first prefix intact
 compact_ratio       = 0.8   # try compacting when prompt reaches this fraction
-compact_force_ratio = 0.9   # force compacting at this high-water mark
 # keep                = ["errors"]   # compaction keep policy: errors, user_marked
 # recent_keep         = 2   # minimum recent messages kept verbatim
-cold_resume_prune   = true   # elide stale tool results when reopening a session past the provider cache window
 # planner_model = "mimo"   # optional: enable two-model collaboration
 # subagent_model = "deepseek-pro"   # optional default for runAs=subagent skills
 # subagent_models = { review = "deepseek-pro", security_review = "deepseek-pro" }   # per-skill overrides
@@ -49,14 +46,7 @@ enabled = true   # language server tools; servers launch lazily when used
 # disabled_skills = ["review"]   # hide noisy or unwanted skills
 
 [permissions]
-# Per-call gating. mode = writer fallback when no rule matches: ask|allow|deny.
-# Readers always default to allow. Precedence: deny > ask > allow > fallback.
-# Rules are "Tool" or "Tool(specifier)"; e.g. Bash(go test:*), Edit(src/**).
-mode  = "ask"
-# deny = ["Bash(rm -rf*)", "Bash(git push*)"]   # hard-blocked in every mode
-allow = ["Bash(mkdir -p:*)", "Edit", "run_skill", "Bash(which flutter && flutter --version 2>/dev/null | head -4)", "Bash(which flutter 2>/dev/null || echo \"NOT_FOUND\"; which dart 2>/dev/null || echo \"DART_NOT_FOUND\")", "Bash(ls /Volumes/SYAN/my/fitutor/fitness_coach/lib/main.dart 2>/dev/null && echo \"PROJECT_CREATED\" || echo \"NOT_CREATED\")", "Bash(cd fitness_coach && ALL_PROXY=socks5://127.0.0.1:7890 HTTPS_PROXY=socks5://127.0.0.1:7890 HTTP_PROXY=socks5://127.0.0.1:7890 flutter test 2>&1)", "Bash(xattr -l /opt/homebrew/share/flutter/bin/cache 2>&1)", "Bash(stat -f \"%N: %Sp %A\" /opt/homebrew/share/flutter/bin/cache /opt/homebrew/share/flutter/bin/cache/engine.stamp.tmp.7484 /opt/homebrew/share/flutter/bin/cache/engine.realm 2>&1)", "Bash(echo $SHELL && which flutter && flutter --version 2>&1 | head -5)"]
-# ask = ["Edit(src/**)"]   # force a prompt even if otherwise allowed
-
+allow = ["Bash(mkdir -p:*)", "Edit", "run_skill", "Bash(which flutter && flutter --version 2>/dev/null | head -4)", "Bash(which flutter 2>/dev/null || echo \"NOT_FOUND\"; which dart 2>/dev/null || echo \"DART_NOT_FOUND\")", "Bash(ls /Users/zhuangyy/ZYY/Code/fitutor/lib/main.dart 2>/dev/null && echo \"PROJECT_CREATED\" || echo \"NOT_CREATED\")", "Bash(ALL_PROXY=socks5://127.0.0.1:7890 HTTPS_PROXY=socks5://127.0.0.1:7890 HTTP_PROXY=socks5://127.0.0.1:7890 flutter test 2>&1)", "Bash(xattr -l /opt/homebrew/share/flutter/bin/cache 2>&1)", "Bash(stat -f \"%N: %Sp %A\" /opt/homebrew/share/flutter/bin/cache /opt/homebrew/share/flutter/bin/cache/engine.stamp.tmp.7484 /opt/homebrew/share/flutter/bin/cache/engine.realm 2>&1)", "Bash(echo $SHELL && which flutter && flutter --version 2>&1 | head -5)", "Bash(cd /Users/zhuangyy/ZYY/Code/fitutor && git log --oneline -10 2>&1)", "Bash(cd /Users/zhuangyy/ZYY/Code/fitutor && git log --oneline -20 2>&1)", "Bash(cd /Users/zhuangyy/ZYY/Code/fitutor && git log --format=\"%h %ad %s\" --date=short -15 2>&1)"]
 [sandbox]
 # Confine tool blast radius. File-writers (write_file/edit_file/multi_edit/move_file)
 # may only write under workspace_root (empty = current dir) and allow_write extras.
