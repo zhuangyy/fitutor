@@ -4,11 +4,18 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-健身好搭子 — 一个健身动作编排和跟练 App（Android + iOS）。面向有一定健身基础、知道自己该练什么、会自己编排动作，但希望有个声音在耳边指导、伴随锻炼的使用者。7 个预置基础动作，其余由用户自行编排。100% 离线，无账号。
+健身好搭子 (`fitness_coach`) — 一个健身动作编排和跟练 App（Android + iOS，application id `com.xzgg.fitutor`）。面向有一定健身基础、知道自己该练什么、会自己编排动作，但希望有个声音在耳边指导、伴随锻炼的使用者。7 个预置基础动作，其余由用户自行编排。100% 离线，无账号。
+
+## Repository Layout
+
+- Flutter project lives at the **repository root** (`lib/`, `android/`, `ios/`, `test/`).
+- `docs/` — privacy policy + app screenshots (tracked); `docs/huawei/` — AppGallery listing materials, **kept local & git-ignored**.
+- `.reasonix/`, `reasonix.toml` — Reasonix agent config, not part of the Flutter build.
+- Signing keys (`android/key.properties`, `*.jks`, `*.keystore`) are git-ignored — never commit them.
 
 ## Commands
 
-Commands run from the repository root. The Reasonix AI agent config (`.reasonix/`, `reasonix.toml`) is not part of the Flutter build.
+All commands run from the repository root.
 
 ```bash
 # Run the app (device/emulator required)
@@ -49,6 +56,8 @@ export PATH="$ANDROID_HOME/platform-tools:$ANDROID_HOME/emulator:$PATH"
 flutter emulators --launch Pixel7
 flutter run -d emulator-5554
 ```
+
+> Note: on this machine `adb shell input tap/swipe` does **not** reach the Flutter UI (keyevents do). Drive the UI through `integration_test` instead (see Testing).
 
 ### iOS Simulator
 
@@ -91,14 +100,14 @@ COMPLETED
 
 ### Database
 
-SQLite via `sqflite`. Singleton `DatabaseHelper` (version 4). Tables:
+SQLite via `sqflite`. Singleton `DatabaseHelper` (db `fitness_coach.db`, version 4). Tables:
 
 | Table | Key columns |
 |---|---|
 | `exercises` | name, category (力量/计时), muscle_group, is_preset, sort_order |
 | `training_plans` | name, sort_order |
 | `plan_exercises` | plan_id, exercise_id, sort_order, sets, reps, work_seconds, rest_seconds, **after_rest_seconds** |
-| `workout_sessions` | plan_name (snapshot), duration_sec, exercises_json, finished_at (null = interrupted) |
+| `workout_sessions` | plan_id, plan_name (snapshot), started_at, duration_sec, exercises_json, finished_at (null = interrupted) |
 
 DAOs follow `fromMap`/`toMap` pattern. `PlanDao.replacePlanExercises` does DELETE + INSERT in a transaction.
 
@@ -118,10 +127,15 @@ DAOs follow `fromMap`/`toMap` pattern. `PlanDao.replacePlanExercises` does DELET
 | `WorkoutSummaryPage` | Post-workout stats, auto-navigates |
 | `HistoryPage` | Session list, refresh on tab switch after workout |
 | `HistoryDetailPage` | Per-exercise completion detail (green check / orange warning) |
-| `SettingsPage` | Voice, haptic, interval reminder, tap-to-pause, version |
+| `SettingsPage` | Voice, haptic, interval reminder, tap-to-pause, version (read via `package_info_plus`) |
 
 ## Testing
 
-- **Model tests** — pure Dart, no setup
-- **Database tests** — `sqflite_common_ffi` + `sqfliteFfiInit()` + `databaseFactoryFfi`
-- **Service tests** — `coach_engine_test.dart` covers state transitions
+- **Model tests** (`test/models/`) — pure Dart, no setup
+- **Database tests** (`test/database/`) — `sqflite_common_ffi` + `sqfliteFfiInit()` + `databaseFactoryFfi`
+- **Service tests** (`test/services/coach_engine_test.dart`) — state transitions
+- **Screenshot test** (`integration_test/android_screenshots_test.dart`) — starts the real app, builds its own sample data, drives the UI with the widget tester, prints `@@SHOT <name>` markers and pauses so an external script can `adb exec-out screencap`. `flutter test` uninstalls the app afterwards, so the test creates its data each run.
+
+```bash
+flutter test integration_test/android_screenshots_test.dart -d emulator-5554
+```
