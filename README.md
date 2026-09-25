@@ -60,7 +60,7 @@
 
 ## 平台与依赖
 
-- Flutter 3.47.2，Dart SDK `^3.12.2`；Android（`targetSdk 36`）与 iOS
+- Flutter 3.47.4（framework revision `9584c6713b`），Dart SDK `^3.12.2`；Android（`targetSdk 36`）与 iOS
 - 运行时依赖：`provider`、`sqflite`、`path`、`flutter_tts`、`flutter_local_notifications`、
   `timezone`、`intl`、`uuid`、`package_info_plus`、`cupertino_icons`
 
@@ -114,7 +114,7 @@ flutter test integration_test/android_screenshots_test.dart -d <device-id>
 | 文档 | 内容 |
 |---|---|
 | `docs/superpowers/specs/fitness-coach-design.md` | 设计文档 |
-| `docs/privacy-policy.html` | 隐私政策（经 GitHub Pages 发布） |
+| `docs/privacy-policy.html` | 隐私政策（源文件随仓库维护，公开发布地址待配置） |
 | `CLAUDE.md` | 面向 AI Agent 的仓库约定 |
 
 > 应用商店上架材料（市场文案、上架操作手册）保留在本地 `docs/huawei/`，不纳入版本控制。
