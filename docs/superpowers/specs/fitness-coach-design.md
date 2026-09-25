@@ -1,8 +1,8 @@
 # 健身好搭子 — 产品设计文档
 
-> **版本：** v1.2.3
+> **版本：** v1.3.1
 > **创建日期：** 2026-06-18
-> **最后更新：** 2026-06-25
+> **最后更新：** 2026-09-26
 > **状态：** 已实现，持续迭代
 
 ---
@@ -17,7 +17,7 @@
 3. 语音跟练：TTS 播报动作信息、倒数、间隔提醒，beep 提示音，震动反馈
 4. 训练记录：完成/中断均记录，详情展示每组完成状态
 
-**平台：** Android + iOS + macOS，Flutter 跨平台，100% 离线
+**平台：** Android + iOS（Flutter 跨平台；桌面端与 Web 已于 2026-09 移除），100% 离线
 
 ---
 
@@ -30,7 +30,7 @@
 | 本地存储 | sqflite（SQLite） |
 | 语音 | flutter_tts（离线 TTS） |
 | 震动 | HapticFeedback（Flutter 内置） |
-| 提示音 | Android AudioTrack PCM / iOS AudioServices / macOS WAV |
+| 提示音 | Android AudioTrack PCM（880Hz）/ iOS AudioServices |
 | 后台保活 | iOS 静默音频 / Android 前台 Service |
 | 通知 | flutter_local_notifications |
 | 网络 | 无，100% 离线 |
@@ -279,7 +279,7 @@ lib/
 - 训练计划 CRUD + 拖拽排序 + 5 项参数配置
 - 完整跟练：三色倒计时环 + 动作列表 + 进度条 + 暂停/跳过/快捷暂停
 - 动作完成后一次性休息（`afterRestSeconds`）
-- 三端 beep 提示音（Android AudioTrack / iOS AudioServices / macOS WAV）
+- 双端 beep 提示音（Android AudioTrack PCM 880Hz / iOS AudioServices 1057）
 - 训练后台保活（iOS 静默音频 / Android 前台 Service）
 - 完成/中断训练均记录，详情展示每组完成状态
 - TTS 引擎预热、倒数防丢、异步安全守卫
@@ -293,8 +293,10 @@ lib/
 - **最小触控区域：** 计划卡片拖拽手柄扩大至 40×40px，确保触控舒适
 - **倒计时环定位：** 用 `Visibility(maintainSize: true)` 替代条件渲染，训练/休息阶段切换时倒计时圆环不上下跳动
 - **Release 签名：** 新增正式 keystore，Release APK 不再使用 debug 签名
-- **应用图标：** 全新耳机+哑铃融合图标，覆盖 Android / iOS / macOS / Web 全平台
+- **应用图标：** 全新耳机+哑铃融合图标，覆盖 Android / iOS 两端
 - **应用名称：** 更名为「健身好搭子」
+
+> 上列 v1.2.3 条目中，「Release 签名 / 应用图标 / 应用名称」三项在 v1.3.x 期间又经历了一轮调整（见文末第十二节）。
 
 ---
 
@@ -333,3 +335,16 @@ lib/
 ### 11.5 整体寓意
 
 深蓝色底色代表专注自律，橙色代表活力运动，耳机 + 哑铃的组合直观传递产品功能：一边提供健身训练内容，一边配套运动音频、跟练背景音乐，用户看到图标就能快速理解 App 是用来边听音乐边健身训练。
+
+---
+
+## 十二、v1.3.x 变更（2026-06-25 ~ 2026-09-16）
+
+- **品牌与包名统一：** 应用名「健身好搭子」，application id 统一为 `com.xzgg.fitutor`
+- **平台收敛：** 移除桌面端（macOS）与 Web，只保留 Android + iOS；beep 提示音随之收敛为双端实现
+- **工程位置：** Flutter 工程从 `fitness_coach/` 子目录移至仓库根目录
+- **正式签名：** Release APK 使用专属 keystore（`android/app/upload-keystore.jks` + `android/key.properties`），两者均不入版本控制
+- **应用图标 v2：** 耳机 + 哑铃融合图标，覆盖 Android 5 个密度（含 adaptive icon）与 iOS
+- **版本号自动读取：** 设置页版本号改用 `package_info_plus` 读取真实包信息，发版只需改 `pubspec.yaml` 一处
+- **上架材料：** 6 张应用商店截图 `docs/screenshots/`（由 `integration_test/android_screenshots_test.dart` 驱动真实界面生成）；隐私政策 `docs/privacy-policy.html`；华为上架文案与操作手册保留在本地 `docs/huawei/`（不入版本控制）
+- **当前版本：** `1.3.1+11`（`versionCode=11`，`targetSdkVersion=36`），2026-09-26 完成签名构建与上架前复核
