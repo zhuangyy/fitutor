@@ -73,6 +73,8 @@ flutter run -d <UUID>
 UI (pages/widgets) → State (Provider) → Services → Data (sqflite DAOs)
 ```
 
+> **Imports:** UI widgets come from `package:material_ui/material_ui.dart`. Since Flutter 3.50, `package:flutter/material.dart` is deprecated (Material moved to the standalone `material_ui` package); do not reintroduce it.
+
 ### CoachEngine (core state machine)
 
 `lib/services/coach_engine.dart` — drives the workout with these phases:

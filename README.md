@@ -60,9 +60,9 @@
 
 ## 平台与依赖
 
-- Flutter 3.47.4（framework revision `9584c6713b`），Dart SDK `^3.12.2`；Android（`targetSdk 36`）与 iOS
+- Flutter 3.50.0（framework revision `ab2912035e`），Dart SDK `^3.13.0`；Android（`targetSdk 36`）与 iOS 15+
 - 运行时依赖：`provider`、`sqflite`、`path`、`flutter_tts`、`flutter_local_notifications`、
-  `timezone`、`intl`、`uuid`、`package_info_plus`、`cupertino_icons`
+  `timezone`、`intl`、`uuid`、`package_info_plus`、`cupertino_icons`、`material_ui`
 
 ## 开发
 

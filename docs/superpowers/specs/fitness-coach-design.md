@@ -25,7 +25,8 @@
 
 | 维度 | 选择 |
 |------|------|
-| 框架 | Flutter 3.x（Dart 3.x） |
+| 框架 | Flutter 3.50（Dart 3.14） |
+| UI 组件 | `material_ui`（Flutter 3.50 起 Material 已从框架拆分为独立包） |
 | 状态管理 | Provider |
 | 本地存储 | sqflite（SQLite） |
 | 语音 | flutter_tts（离线 TTS） |
