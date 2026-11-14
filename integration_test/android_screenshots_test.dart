@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
@@ -33,7 +33,7 @@ import 'package:fitness_coach/widgets/plan_card.dart';
 /// 在每个场景打印 `@@SHOT <name>` 并停顿，由外部脚本 `adb exec-out screencap` 抓图。
 ///
 /// 运行：
-///   flutter test integration_test/android_screenshots_test.dart -d <device-id>
+///   `flutter test integration_test/android_screenshots_test.dart -d <device-id>`
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 

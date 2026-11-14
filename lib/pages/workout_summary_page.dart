@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:fitness_coach/services/coach_engine.dart';
 
 class WorkoutSummaryPage extends StatelessWidget {

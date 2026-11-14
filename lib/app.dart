@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:provider/provider.dart';
 import 'package:fitness_coach/providers/plan_provider.dart';
 import 'package:fitness_coach/providers/workout_provider.dart';

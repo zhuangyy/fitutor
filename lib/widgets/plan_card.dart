@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:fitness_coach/models/training_plan.dart';
 
 class PlanCard extends StatelessWidget {

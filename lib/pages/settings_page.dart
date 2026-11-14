@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:provider/provider.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:fitness_coach/providers/settings_provider.dart';
@@ -90,19 +90,27 @@ Future<void> _showIntervalPicker(
     context: context,
     builder: (ctx) => SimpleDialog(
       title: const Text('间隔提醒'),
-      children: List.generate(options.length, (i) {
-        final selected = options[i] == settings.reminderInterval;
-        return RadioListTile<int>(
-          title: Text(labels[i]),
-          value: options[i],
+      children: [
+        RadioGroup<int>(
           groupValue: settings.reminderInterval,
-          selected: selected,
           onChanged: (v) {
-            settings.setReminderInterval(v!);
+            if (v == null) return;
+            settings.setReminderInterval(v);
             Navigator.pop(ctx);
           },
-        );
-      }),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: List.generate(options.length, (i) {
+              final selected = options[i] == settings.reminderInterval;
+              return RadioListTile<int>(
+                title: Text(labels[i]),
+                value: options[i],
+                selected: selected,
+              );
+            }),
+          ),
+        ),
+      ],
     ),
   );
 }

@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:fitness_coach/services/coach_engine.dart';
 import 'package:fitness_coach/services/tts_service.dart';
 import 'package:fitness_coach/services/haptic_service.dart';

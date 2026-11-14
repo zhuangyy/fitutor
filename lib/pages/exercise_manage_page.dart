@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:fitness_coach/database/exercise_dao.dart';
 import 'package:fitness_coach/models/exercise.dart';
 
@@ -225,22 +225,6 @@ class _ExerciseManagePageState extends State<ExerciseManagePage> {
       ));
       _load();
     }
-  }
-
-  Future<void> _reorder(int oldIndex, int newIndex) async {
-    setState(() {
-      if (newIndex > oldIndex) newIndex--;
-      final item = _filtered.removeAt(oldIndex);
-      _filtered.insert(newIndex, item);
-    });
-    for (int i = 0; i < _exercises.length; i++) {
-      final e = _exercises[i];
-      final target = _filtered.indexOf(e);
-      if (target >= 0 && e.sortOrder != target) {
-        await _dao.update(e.copyWith(sortOrder: target));
-      }
-    }
-    await _load();
   }
 
   @override

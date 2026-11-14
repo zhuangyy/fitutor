@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:fitness_coach/database/session_dao.dart';
 import 'package:fitness_coach/models/workout_session.dart';
 
@@ -34,8 +34,9 @@ class HistoryDetailPage extends StatelessWidget {
                 ),
               );
               if (confirmed == true && context.mounted) {
+                final navigator = Navigator.of(context);
                 await SessionDao().delete(session.id!);
-                Navigator.pop(context);
+                navigator.pop();
               }
             },
           ),

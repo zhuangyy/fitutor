@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:fitness_coach/database/exercise_dao.dart';
 import 'package:fitness_coach/models/exercise.dart';
 

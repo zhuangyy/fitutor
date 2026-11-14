@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:provider/provider.dart';
 import 'package:fitness_coach/providers/workout_provider.dart';
 import 'package:fitness_coach/providers/settings_provider.dart';
@@ -17,9 +17,9 @@ class _WorkoutPageState extends State<WorkoutPage> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(() {
-      context.read<WorkoutProvider>().startWorkout();
-    });
+    // 同步取出 provider，避免在 microtask 里跨异步间隙使用 context。
+    final provider = context.read<WorkoutProvider>();
+    Future.microtask(provider.startWorkout);
   }
 
   @override
@@ -29,10 +29,9 @@ class _WorkoutPageState extends State<WorkoutPage> {
       onPopInvokedWithResult: (didPop, _) async {
         if (didPop) return;
         final shouldExit = await _showExitDialog();
-        if (shouldExit && mounted) {
-          context.read<WorkoutProvider>().stopWorkout();
-          Navigator.of(context).pop();
-        }
+        if (!shouldExit || !context.mounted) return;
+        context.read<WorkoutProvider>().stopWorkout();
+        Navigator.of(context).pop();
       },
       child: Scaffold(
         body: SafeArea(
@@ -42,6 +41,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
 
               if (state.phase == CoachPhase.completed) {
                 Future.microtask(() {
+                  if (!context.mounted) return;
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
@@ -85,10 +85,9 @@ class _WorkoutPageState extends State<WorkoutPage> {
                 icon: const Icon(Icons.close),
                 onPressed: () async {
                   final shouldExit = await _showExitDialog();
-                  if (shouldExit && mounted) {
-                    context.read<WorkoutProvider>().stopWorkout();
-                    Navigator.of(context).pop();
-                  }
+                  if (!shouldExit || !context.mounted) return;
+                  context.read<WorkoutProvider>().stopWorkout();
+                  Navigator.of(context).pop();
                 },
               ),
               const Spacer(),
@@ -224,10 +223,9 @@ class _WorkoutPageState extends State<WorkoutPage> {
             OutlinedButton.icon(
               onPressed: () async {
                 final shouldExit = await _showExitDialog();
-                if (shouldExit && mounted) {
-                  context.read<WorkoutProvider>().stopWorkout();
-                  Navigator.of(context).pop();
-                }
+                if (!shouldExit || !context.mounted) return;
+                context.read<WorkoutProvider>().stopWorkout();
+                Navigator.of(context).pop();
               },
               icon: const Icon(Icons.stop),
               label: const Text('结束训练'),
