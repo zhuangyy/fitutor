@@ -1,29 +1,26 @@
 import 'package:flutter/services.dart';
 
 class HapticService {
-  bool _enabled = true;
-
-  bool get enabled => _enabled;
-  set enabled(bool value) => _enabled = value;
+  bool enabled = true;
 
   void light() {
-    if (!_enabled) return;
+    if (!enabled) return;
     HapticFeedback.lightImpact();
   }
 
   void medium() {
-    if (!_enabled) return;
+    if (!enabled) return;
     HapticFeedback.mediumImpact();
   }
 
   void heavy() {
-    if (!_enabled) return;
+    if (!enabled) return;
     HapticFeedback.heavyImpact();
   }
 
   /// 倒计时最后5秒每秒震动：5,4→light, 3→medium, 2→medium, 1→heavy
   void countdownBuzz(int remainingSeconds) {
-    if (!_enabled) return;
+    if (!enabled) return;
     switch (remainingSeconds) {
       case 5:
       case 4:

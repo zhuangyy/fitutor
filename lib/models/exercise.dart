@@ -5,7 +5,7 @@ class Exercise {
   final String muscleGroup;
   final String iconCode;      // Flutter IconData codePoint
   final String? description;
-  bool _isPreset;
+  bool isPreset;
   final int sortOrder;
   final String? createdAt;
 
@@ -16,13 +16,10 @@ class Exercise {
     required this.muscleGroup,
     required this.iconCode,
     this.description,
-    bool isPreset = false,
+    this.isPreset = false,
     this.sortOrder = 0,
     this.createdAt,
-  }) : _isPreset = isPreset;
-
-  bool get isPreset => _isPreset;
-  set isPreset(bool value) => _isPreset = value;
+  });
 
   factory Exercise.fromMap(Map<String, dynamic> map) {
     return Exercise(
@@ -46,7 +43,7 @@ class Exercise {
       'muscle_group': muscleGroup,
       'icon_code': iconCode,
       'description': description,
-      'is_preset': _isPreset ? 1 : 0,
+      'is_preset': isPreset ? 1 : 0,
       'sort_order': sortOrder,
       'created_at': createdAt,
     };
@@ -70,7 +67,7 @@ class Exercise {
       muscleGroup: muscleGroup ?? this.muscleGroup,
       iconCode: iconCode ?? this.iconCode,
       description: description ?? this.description,
-      isPreset: isPreset ?? _isPreset,
+      isPreset: isPreset ?? this.isPreset,
       sortOrder: sortOrder ?? this.sortOrder,
       createdAt: createdAt ?? this.createdAt,
     );

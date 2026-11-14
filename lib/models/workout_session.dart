@@ -79,8 +79,8 @@ class WorkoutSession {
   String get formattedDuration {
     final minutes = durationSec ~/ 60;
     final seconds = durationSec % 60;
-    if (minutes == 0) return '${seconds}秒';
-    return '${minutes}分${seconds}秒';
+    if (minutes == 0) return '$seconds秒';
+    return '$minutes分$seconds秒';
   }
 
   /// 格式化日期显示

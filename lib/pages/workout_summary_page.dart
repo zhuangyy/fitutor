@@ -76,7 +76,7 @@ class WorkoutSummaryPage extends StatelessWidget {
   String _formatDuration(int seconds) {
     final m = seconds ~/ 60;
     final s = seconds % 60;
-    if (m == 0) return '${s}秒';
-    return '${m}分${s}秒';
+    if (m == 0) return '$s秒';
+    return '$m分$s秒';
   }
 }

@@ -97,9 +97,7 @@ class CoachEngine {
   /// 中途提醒间隔秒数，0 = 关闭
   int reminderIntervalSeconds = 0;
 
-  CoachEngine({required TtsService tts, required HapticService haptic})
-      : _tts = tts,
-        _haptic = haptic;
+  CoachEngine({required this._tts, required this._haptic});
 
   void loadPlan(TrainingPlan plan) {
     _emit(_state.copyWith(
@@ -121,7 +119,9 @@ class CoachEngine {
   void pause() {
     if (_state.phase != CoachPhase.working &&
         _state.phase != CoachPhase.resting &&
-        _state.phase != CoachPhase.postExerciseResting) return;
+        _state.phase != CoachPhase.postExerciseResting) {
+      return;
+    }
     _timer?.cancel();
     _phaseBeforePause = _state.phase;
     _frozenRemaining = _state.remainingSeconds;
@@ -140,7 +140,9 @@ class CoachEngine {
 
   void skipRest() {
     if (_state.phase != CoachPhase.resting &&
-        _state.phase != CoachPhase.postExerciseResting) return;
+        _state.phase != CoachPhase.postExerciseResting) {
+      return;
+    }
     _timer?.cancel();
     _timerOnDone?.call();
   }
@@ -195,7 +197,7 @@ class CoachEngine {
           lastAnnouncedRemaining = remaining;
           final prefix =
               (_state.phase == CoachPhase.resting || _state.phase == CoachPhase.postExerciseResting) ? '休息' : '';
-          _tts.speak('${prefix}还剩余$remaining秒');
+          _tts.speak('$prefix还剩余$remaining秒');
         }
       }
 
@@ -250,10 +252,10 @@ class CoachEngine {
             : null;
         if (nextExercise != null) {
           await _tts.speak(
-              '${exercise.exerciseName ?? '动作'}完成，休息${afterRest}秒。下一动作：${_announcementText(nextExercise)}');
+              '${exercise.exerciseName ?? '动作'}完成，休息$afterRest秒。下一动作：${_announcementText(nextExercise)}');
         } else {
           await _tts.speak(
-              '${exercise.exerciseName ?? '动作'}完成，休息${afterRest}秒');
+              '${exercise.exerciseName ?? '动作'}完成，休息$afterRest秒');
         }
         // 播报期间可能被 skip 打断
         if (_state.phase != CoachPhase.postExerciseResting) return;
@@ -269,7 +271,7 @@ class CoachEngine {
       _emit(_state.copyWith(currentSetIndex: newSetIndex));
       _timerOnDone = _onRestComplete;
       _emitState(CoachPhase.resting, remaining: exercise.restSeconds);
-      await _tts.speak('${exercise.exerciseName ?? '动作'}第${newSetIndex}组完成, 休息${exercise.restSeconds}秒');
+      await _tts.speak('${exercise.exerciseName ?? '动作'}第$newSetIndex组完成, 休息${exercise.restSeconds}秒');
       // 播报期间可能被 skip 打断
       if (_state.phase != CoachPhase.resting) return;
       await Future.delayed(const Duration(seconds: 1));
@@ -345,8 +347,8 @@ class CoachEngine {
     final sets = exercise.sets;
     final workSec = exercise.workSeconds;
     if (exercise.reps != null) {
-      return '$name，$sets组，每组${exercise.reps}次，训练${workSec}秒';
+      return '$name，$sets组，每组${exercise.reps}次，训练$workSec秒';
     }
-    return '$name，$sets组，每组${workSec}秒';
+    return '$name，$sets组，每组$workSec秒';
   }
 }

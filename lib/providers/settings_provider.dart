@@ -11,12 +11,10 @@ class SettingsProvider extends ChangeNotifier {
   bool _tapToPause = false;
 
   SettingsProvider({
-    required TtsService tts,
-    required HapticService haptic,
-    required NotificationService notification,
-  })  : _tts = tts,
-        _haptic = haptic,
-        _notification = notification;
+    required this._tts,
+    required this._haptic,
+    required this._notification,
+  });
 
   bool get ttsEnabled => !_tts.isMuted;
   bool get hapticEnabled => _haptic.enabled;
@@ -25,7 +23,7 @@ class SettingsProvider extends ChangeNotifier {
   int get reminderInterval => _reminderInterval;
   bool get tapToPause => _tapToPause;
   String get reminderIntervalLabel =>
-      _reminderInterval == 0 ? '关闭' : '${_reminderInterval}秒';
+      _reminderInterval == 0 ? '关闭' : '$_reminderInterval秒';
 
   void toggleTts() {
     _tts.toggleMute();
